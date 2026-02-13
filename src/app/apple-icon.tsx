@@ -17,19 +17,37 @@ export default function Icon() {
       // ImageResponse JSX element
       <div
         style={{
-          fontSize: 120,
           background: 'linear-gradient(to bottom right, #8b5cf6, #06b6d4)',
           width: '100%',
           height: '100%',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          color: 'white',
           borderRadius: '36px',
-          fontWeight: 'bold',
+          position: 'relative',
         }}
       >
-        A
+        <div
+          style={{
+            width: '100px',
+            height: '100px',
+            border: '15px solid white',
+            borderRadius: '50%',
+            opacity: 0.8,
+          }}
+        />
+        <div
+          style={{
+            position: 'absolute',
+            width: '40px',
+            height: '40px',
+            background: 'white',
+            borderRadius: '50%',
+            top: '40px',
+            right: '40px',
+            boxShadow: '0 0 40px white',
+          }}
+        />
       </div>
     ),
     // ImageResponse options
