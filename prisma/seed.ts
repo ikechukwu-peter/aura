@@ -4,9 +4,33 @@ import { TicketingService } from "../src/services/ticketing";
 import { UserRole, EventStatus } from "@prisma/client";
 
 async function main() {
-  console.log("Seeding database...");
+  const isProduction = process.env.NODE_ENV === "production";
+  const forceSeed = process.env.ENABLE_SEEDING === "true";
 
-  // 1. Clear existing data
+  console.log(`Seeding database (Env: ${process.env.NODE_ENV || 'development'})...`);
+
+  // Safety check: Only run full seed in development, or if explicitly forced
+  if (isProduction && !forceSeed) {
+    console.warn("⚠️  Skipping full seed in production. To force seeding, set ENABLE_SEEDING=true.");
+    
+    // In production, we ONLY ensure the Super Admin exists if it doesn't
+    const passwordHash = await bcrypt.hash("Password123!", 10);
+    await prisma.user.upsert({
+      where: { email: "superadmin@example.com" },
+      update: {},
+      create: {
+        email: "superadmin@example.com",
+        name: "Supreme Overseer",
+        passwordHash,
+        role: UserRole.SUPER_ADMIN,
+      },
+    });
+    console.log("✅ Super Admin check completed.");
+    return;
+  }
+
+  // 1. Clear existing data (Only in non-prod or forced)
+  console.log("🧹 Cleaning up existing data...");
   await prisma.auditLog.deleteMany();
   await prisma.ticket.deleteMany();
   await prisma.reservation.deleteMany();
@@ -61,7 +85,7 @@ async function main() {
     },
   });
 
-  console.log("Users created.");
+  console.log("👥 Users created.");
 
   // 3. Create Events
   const events = [
@@ -107,7 +131,7 @@ async function main() {
     await prisma.event.create({ data: eventData });
   }
 
-  console.log("Events created.");
+  console.log("📅 Events created.");
 
   // 4. Sample Ticket for the user
   const techSummit = await prisma.event.findFirst({ where: { title: "Global Tech Summit 2026" } });
@@ -125,7 +149,7 @@ async function main() {
     }
   }
 
-  console.log("Seed completed successfully.");
+  console.log("✨ Seed completed successfully.");
 }
 
 main()

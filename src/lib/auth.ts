@@ -1,6 +1,5 @@
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
-import { NextRequest, NextResponse } from "next/server";
 import { UserRole } from "@prisma/client";
 
 const secretKey = process.env.JWT_SECRET || "default_secret_key";

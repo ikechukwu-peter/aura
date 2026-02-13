@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { ImageService } from "@/services/images";
-import path from "path";
-import fs from "fs/promises";
 
 export async function POST(req: Request) {
   try {
@@ -19,18 +17,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
     }
 
-    // Ensure upload directories exist
-    const baseDir = path.join(process.cwd(), "public/uploads/events");
-    await fs.mkdir(path.join(baseDir, "original"), { recursive: true });
-    await fs.mkdir(path.join(baseDir, "banners"), { recursive: true });
-    await fs.mkdir(path.join(baseDir, "thumbs"), { recursive: true });
-
     const buffer = Buffer.from(await file.arrayBuffer());
     
-    // We don't have eventId yet during initial upload in the wizard
-    // So we'll just process it and return the paths.
-    // The final event creation will link these paths.
-    const imageInfo = await ImageService.processEventImage(buffer, "temp");
+    // Pass the userId (session.userId) so the storage object gets the correct owner
+    const imageInfo = await ImageService.processEventImage(buffer, "temp", session.userId);
 
     return NextResponse.json(imageInfo);
   } catch (error: any) {
