@@ -148,10 +148,10 @@ export default async function Home() {
                 </div>
               </CardHeader>
               <CardFooter className="p-10 pt-0">
-                <Button className="w-full h-16 rounded-2xl group/btn font-bold text-sm shadow-glow-aura transition-all hover:scale-[1.02] cursor-pointer bg-aura-primary hover:bg-aura-primary/90" variant="default" asChild>
+                <Button size="xl" className="w-full h-20 rounded-2xl group/btn font-bold text-lg shadow-glow-aura transition-all hover:scale-[1.02] cursor-pointer bg-aura-primary hover:bg-aura-primary/90" variant="default" asChild>
                   <Link href={`/events/${event.id}`} className="w-full h-full flex items-center justify-center gap-3">
                     Get tickets
-                    <ArrowRight className="h-5 w-5 transition-transform group-hover/btn:translate-x-1" />
+                    <ArrowRight className="h-6 w-6 transition-transform group-hover/btn:translate-x-1" />
                   </Link>
                 </Button>
               </CardFooter>
