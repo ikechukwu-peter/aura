@@ -12,11 +12,11 @@ export default async function Navbar() {
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/60 backdrop-blur-2xl supports-[backdrop-filter]:bg-background/40">
       <div className="max-w-7xl mx-auto px-6 lg:px-12 flex h-20 items-center justify-between">
         <div className="flex items-center gap-12">
-          <Link href="/" className="flex items-center space-x-3 group">
-            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-aura-primary to-aura-secondary flex items-center justify-center group-hover:shadow-glow-aura transition-all duration-500 group-hover:scale-110 active:scale-95 border border-aura-primary/20">
-              <Zap className="h-5 w-5 text-white fill-white" />
+          <Link href="/" className="flex items-center space-x-2 sm:space-x-3 group">
+            <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-lg sm:xl bg-gradient-to-br from-aura-primary to-aura-secondary flex items-center justify-center group-hover:shadow-glow-aura transition-all duration-500 group-hover:scale-110 active:scale-95 border border-aura-primary/20">
+              <Zap className="h-4 w-4 sm:h-5 sm:w-5 text-white fill-white" />
             </div>
-            <span className="inline-block font-black text-2xl tracking-tighter bg-gradient-to-r from-foreground via-foreground to-foreground/40 bg-clip-text text-transparent group-hover:drop-shadow-sm transition-all">
+            <span className="inline-block font-black text-xl sm:text-2xl tracking-tighter bg-gradient-to-r from-foreground via-foreground to-foreground/40 bg-clip-text text-transparent group-hover:drop-shadow-sm transition-all">
               Aura
             </span>
           </Link>
@@ -30,7 +30,7 @@ export default async function Navbar() {
           </nav>
         </div>
 
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-2 sm:gap-6">
           <div className="hidden md:flex items-center gap-8">
             {session ? (
               <>
@@ -126,8 +126,8 @@ export default async function Navbar() {
           </div>
           <div className="h-6 w-px bg-border hidden md:block" />
           <ThemeToggle />
-          <button className="md:hidden p-2 text-foreground/40 hover:text-foreground cursor-pointer transition-colors">
-            <Menu className="h-6 w-6" />
+          <button className="md:hidden p-2 text-foreground/40 hover:text-foreground cursor-pointer transition-colors" aria-label="Toggle menu">
+            <Menu className="h-5 w-5 sm:h-6 sm:w-6" />
           </button>
         </div>
       </div>

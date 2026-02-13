@@ -17,38 +17,38 @@ export default async function Home() {
   return (
     <div className="flex flex-col gap-16 pb-16 w-full">
       {/* Hero Section */}
-      <section className="relative py-24 md:py-36 overflow-hidden w-full">
+      <section className="relative py-12 sm:py-24 md:py-36 overflow-hidden w-full">
         {/* Background Decorative Elements */}
-        <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-[800px] h-[800px] bg-aura-primary/10 blur-[120px] rounded-full -z-10" />
-        <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/4 w-[600px] h-[600px] bg-aura-secondary/10 blur-[100px] rounded-full -z-10" />
+        <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-[300px] h-[300px] sm:w-[800px] sm:h-[800px] bg-aura-primary/10 blur-[60px] sm:blur-[120px] rounded-full -z-10" />
+        <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/4 w-[250px] h-[250px] sm:w-[600px] sm:h-[600px] bg-aura-secondary/10 blur-[50px] sm:blur-[100px] rounded-full -z-10" />
         
         <div className="w-full relative z-10">
-          <div className="max-w-4xl space-y-8">
-            <div className="inline-flex items-center rounded-full border border-aura-primary/20 bg-aura-primary/5 px-6 py-2 text-xs font-bold tracking-wide text-aura-primary backdrop-blur-xl animate-in fade-in slide-in-from-top-4 duration-1000">
-              <Sparkles className="h-4 w-4 mr-3 animate-pulse" />
+          <div className="max-w-4xl space-y-6 sm:space-y-8 text-center sm:text-left">
+            <div className="inline-flex items-center rounded-full border border-aura-primary/20 bg-aura-primary/5 px-4 sm:px-6 py-2 text-[10px] sm:text-xs font-bold tracking-wide text-aura-primary backdrop-blur-xl animate-in fade-in slide-in-from-top-4 duration-1000 mx-auto sm:mx-0">
+              <Sparkles className="h-3 w-3 sm:h-4 sm:w-4 mr-2 sm:mr-3 animate-pulse" />
               The future of ticketing is here
             </div>
-            <h1 className="text-7xl md:text-9xl font-black tracking-tighter leading-[0.85] text-foreground">
+            <h1 className="text-4xl sm:text-7xl md:text-9xl font-black tracking-tighter leading-[0.85] text-foreground break-words">
               Aura <span className="bg-gradient-to-r from-aura-primary via-aura-secondary to-aura-accent bg-clip-text text-transparent animate-gradient-x text-shadow-glow">Experience</span>
             </h1>
-            <p className="text-xl text-foreground/70 dark:text-foreground/60 max-w-2xl leading-relaxed font-medium tracking-normal">
-              The world's most advanced event infrastructure. <br />
+            <p className="text-base sm:text-xl text-foreground/70 dark:text-foreground/60 max-w-2xl leading-relaxed font-medium tracking-normal mx-auto sm:mx-0">
+              The world's most advanced event infrastructure. <br className="hidden sm:block" />
               <span className="text-aura-primary/60 font-semibold">Built on speed, secured by Aura Neural Systems.</span>
             </p>
-            <div className="flex flex-wrap gap-4 pt-6">
-              <Button size="xl" className="h-20 px-12 shadow-glow-aura rounded-2xl text-base font-bold transition-all hover:scale-[1.02] active:scale-95 group cursor-pointer bg-aura-primary hover:bg-aura-primary/90" asChild>
-                <Link href="/events" className="flex items-center gap-3">
-                  Browse events <ArrowRight className="h-6 w-6 transition-transform group-hover:translate-x-1" />
+            <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-4 pt-4 sm:pt-6">
+              <Button size="xl" className="w-full sm:w-auto h-16 sm:h-20 px-10 sm:px-12 shadow-glow-aura rounded-2xl text-sm sm:text-base font-bold transition-all hover:scale-[1.02] active:scale-95 group cursor-pointer bg-aura-primary hover:bg-aura-primary/90" asChild>
+                <Link href="/events" className="flex items-center justify-center gap-3">
+                  Browse events <ArrowRight className="h-5 w-5 sm:h-6 sm:w-6 transition-transform group-hover:translate-x-1" />
                 </Link>
               </Button>
               {session ? (
-                <Button size="xl" variant="glass" className="h-20 px-12 rounded-2xl text-base font-bold transition-all hover:scale-[1.02] active:scale-95 cursor-pointer border-aura-primary/20 text-aura-primary" asChild>
+                <Button size="xl" variant="glass" className="w-full sm:w-auto h-16 sm:h-20 px-10 sm:px-12 rounded-2xl text-sm sm:text-base font-bold transition-all hover:scale-[1.02] active:scale-95 cursor-pointer border-aura-primary/20 text-aura-primary" asChild>
                   <Link href={(session.role === "ADMIN" || (session.role as string) === "SUPER_ADMIN") ? "/admin/dashboard" : session.role === "ORGANIZER" ? "/organizer/dashboard" : "/dashboard"}>
                     Dashboard
                   </Link>
                 </Button>
               ) : (
-                <Button size="xl" variant="glass" className="h-20 px-12 rounded-2xl text-base font-bold transition-all hover:scale-[1.02] active:scale-95 cursor-pointer border-aura-primary/20 text-aura-primary" asChild>
+                <Button size="xl" variant="glass" className="w-full sm:w-auto h-16 sm:h-20 px-10 sm:px-12 rounded-2xl text-sm sm:text-base font-bold transition-all hover:scale-[1.02] active:scale-95 cursor-pointer border-aura-primary/20 text-aura-primary" asChild>
                   <Link href="/register">Create account</Link>
                 </Button>
               )}
