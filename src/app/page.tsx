@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { ArrowRight, Calendar, MapPin, Shield, Zap, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -5,20 +6,17 @@ import { prisma } from "@/lib/prisma";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatDate } from "@/lib/utils";
 import { getSession } from "@/lib/auth";
+import { FeaturedEventsSkeleton } from "@/components/events/featured-events-skeleton";
+import { FeaturedEventsError } from "@/components/events/featured-events-error";
 
 export default async function Home() {
   const session = await getSession();
-  const featuredEvents = await prisma.event.findMany({
-    where: { status: "PUBLISHED", approvedByAdmin: true },
-    take: 3,
-    orderBy: { startTime: "asc" },
-  });
 
   return (
     <div className="flex flex-col gap-16 pb-16 w-full">
       {/* Hero Section */}
       <section className="relative py-12 sm:py-24 md:py-36 overflow-hidden w-full">
-        {/* Background Decorative Elements */}
+        {/* ... Hero Content ... */}
         <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-[300px] h-[300px] sm:w-[800px] sm:h-[800px] bg-aura-primary/10 blur-[60px] sm:blur-[120px] rounded-full -z-10" />
         <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/4 w-[250px] h-[250px] sm:w-[600px] sm:h-[600px] bg-aura-secondary/10 blur-[50px] sm:blur-[100px] rounded-full -z-10" />
         
@@ -114,51 +112,78 @@ export default async function Home() {
           </Button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-          {featuredEvents.map((event) => (
-            <Card key={event.id} className="overflow-hidden group flex flex-col p-0 bg-background border-border/60 hover:border-aura-primary/20 transition-all duration-500 rounded-[2.5rem] shadow-card hover:shadow-2xl">
-              <div className="aspect-[16/11] relative bg-foreground/[0.03] overflow-hidden">
-                <div className="absolute inset-0 flex items-center justify-center text-foreground/10 group-hover:scale-110 transition-transform duration-700">
-                   <Calendar className="h-24 w-24 opacity-10" />
-                </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <div className="absolute top-6 left-6">
-                  <span className="px-4 py-1.5 rounded-full bg-background/60 backdrop-blur-xl border border-border text-[10px] font-bold tracking-wider text-foreground">
-                    {event.category}
-                  </span>
-                </div>
-              </div>
-              <CardHeader className="flex-1 p-10 pb-6">
-                <CardTitle className="text-3xl font-bold tracking-tight group-hover:text-aura-primary transition-colors duration-300 leading-tight text-foreground">
-                  {event.title}
-                </CardTitle>
-                <div className="flex flex-col gap-5 mt-8">
-                  <div className="flex items-center text-sm text-foreground/70 font-medium">
-                    <div className="h-8 w-8 rounded-lg bg-aura-primary/10 flex items-center justify-center mr-4 border border-aura-primary/20">
-                      <Calendar className="h-4 w-4 text-aura-primary" />
-                    </div>
-                    {formatDate(event.startTime)}
-                  </div>
-                  <div className="flex items-center text-sm text-foreground/70 font-medium">
-                    <div className="h-8 w-8 rounded-lg bg-aura-secondary/10 flex items-center justify-center mr-4 border border-aura-secondary/20">
-                      <MapPin className="h-4 w-4 text-aura-secondary" />
-                    </div>
-                    {event.location}
-                  </div>
-                </div>
-              </CardHeader>
-              <CardFooter className="p-10 pt-0">
-                <Button size="xl" className="w-full h-20 rounded-2xl group/btn font-bold text-lg shadow-glow-aura transition-all hover:scale-[1.02] cursor-pointer bg-aura-primary hover:bg-aura-primary/90" variant="default" asChild>
-                  <Link href={`/events/${event.id}`} className="w-full h-full flex items-center justify-center gap-3">
-                    Get tickets
-                    <ArrowRight className="h-6 w-6 transition-transform group-hover/btn:translate-x-1" />
-                  </Link>
-                </Button>
-              </CardFooter>
-            </Card>
-          ))}
-        </div>
+        <Suspense fallback={<FeaturedEventsSkeleton />}>
+          <FeaturedEventsList />
+        </Suspense>
       </section>
     </div>
   );
 }
+
+async function FeaturedEventsList() {
+  try {
+    const featuredEvents = await prisma.event.findMany({
+      where: { status: "PUBLISHED", approvedByAdmin: true },
+      take: 3,
+      orderBy: { startTime: "asc" },
+    });
+
+    if (featuredEvents.length === 0) {
+      return (
+        <div className="py-20 text-center border-2 border-dashed border-border rounded-[2.5rem]">
+          <p className="text-foreground/40 font-medium">No featured events at the moment.</p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+        {featuredEvents.map((event) => (
+          <Card key={event.id} className="overflow-hidden group flex flex-col p-0 bg-background border-border/60 hover:border-aura-primary/20 transition-all duration-500 rounded-[2.5rem] shadow-card hover:shadow-2xl">
+            <div className="aspect-[16/11] relative bg-foreground/[0.03] overflow-hidden">
+              <div className="absolute inset-0 flex items-center justify-center text-foreground/10 group-hover:scale-110 transition-transform duration-700">
+                 <Calendar className="h-24 w-24 opacity-10" />
+              </div>
+              <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="absolute top-6 left-6">
+                <span className="px-4 py-1.5 rounded-full bg-background/60 backdrop-blur-xl border border-border text-[10px] font-bold tracking-wider text-foreground">
+                  {event.category}
+                </span>
+              </div>
+            </div>
+            <CardHeader className="flex-1 p-10 pb-6">
+              <CardTitle className="text-3xl font-bold tracking-tight group-hover:text-aura-primary transition-colors duration-300 leading-tight text-foreground">
+                {event.title}
+              </CardTitle>
+              <div className="flex flex-col gap-5 mt-8">
+                <div className="flex items-center text-sm text-foreground/70 font-medium">
+                  <div className="h-8 w-8 rounded-lg bg-aura-primary/10 flex items-center justify-center mr-4 border border-aura-primary/20">
+                    <Calendar className="h-4 w-4 text-aura-primary" />
+                  </div>
+                  {formatDate(event.startTime)}
+                </div>
+                <div className="flex items-center text-sm text-foreground/70 font-medium">
+                  <div className="h-8 w-8 rounded-lg bg-aura-secondary/10 flex items-center justify-center mr-4 border border-aura-secondary/20">
+                    <MapPin className="h-4 w-4 text-aura-secondary" />
+                  </div>
+                  {event.location}
+                </div>
+              </div>
+            </CardHeader>
+            <CardFooter className="p-10 pt-0">
+              <Button size="xl" className="w-full h-20 rounded-2xl group/btn font-bold text-lg shadow-glow-aura transition-all hover:scale-[1.02] cursor-pointer bg-aura-primary hover:bg-aura-primary/90" variant="default" asChild>
+                <Link href={`/events/${event.id}`} className="w-full h-full flex items-center justify-center gap-3">
+                  Get tickets
+                  <ArrowRight className="h-6 w-6 transition-transform group-hover/btn:translate-x-1" />
+                </Link>
+              </Button>
+            </CardFooter>
+          </Card>
+        ))}
+      </div>
+    );
+  } catch (error) {
+    return <FeaturedEventsError />;
+  }
+}
+
