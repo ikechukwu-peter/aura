@@ -55,18 +55,18 @@ export function DeploymentRequests({ initialEvents }: DeploymentRequestsProps) {
   return (
     <div className="divide-y divide-border">
       {events.map((event) => (
-        <div key={event.id} className="p-8 hover:bg-foreground/[0.01] transition-all flex items-center justify-between gap-6 group">
+        <div key={event.id} className="p-8 hover:bg-foreground/[0.01] transition-all flex flex-col md:flex-row md:items-center md:justify-between gap-6 group">
           <div className="space-y-1">
             <h4 className="font-black uppercase tracking-tight group-hover:text-aura-primary transition-colors">{event.title}</h4>
             <p className="text-xs font-bold text-foreground/40 uppercase tracking-widest">
               By {event.organizer.name || "Anonymous Agent"} • {formatDate(event.startTime)}
             </p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
             <Button 
               variant="glass" 
               size="sm" 
-              className="h-10 rounded-xl px-5 text-[10px] font-black uppercase tracking-widest text-aura-primary hover:bg-aura-primary/10 cursor-pointer disabled:opacity-50"
+              className="h-10 rounded-xl px-5 text-[10px] font-black uppercase tracking-widest text-aura-primary hover:bg-aura-primary/10 cursor-pointer disabled:opacity-50 w-full md:w-auto"
               onClick={() => handleAction(event.id, "APPROVE")}
               disabled={processingId === event.id}
             >
@@ -76,7 +76,7 @@ export function DeploymentRequests({ initialEvents }: DeploymentRequestsProps) {
             <Button 
               variant="glass" 
               size="sm" 
-              className="h-10 rounded-xl px-5 text-[10px] font-black uppercase tracking-widest text-red-500 hover:bg-red-500/10 cursor-pointer disabled:opacity-50"
+              className="h-10 rounded-xl px-5 text-[10px] font-black uppercase tracking-widest text-red-500 hover:bg-red-500/10 cursor-pointer disabled:opacity-50 w-full md:w-auto"
               onClick={() => handleAction(event.id, "REJECT")}
               disabled={processingId === event.id}
             >

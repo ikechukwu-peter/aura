@@ -15,20 +15,18 @@ export default async function AdminDashboard() {
     redirect("/login");
   }
 
-  const [totalUsers, totalEvents, pendingEventsData, auditLogsData] = await Promise.all([
-    prisma.user.count(),
-    prisma.event.count(),
-    prisma.event.findMany({
-      where: { approvedByAdmin: false, status: "DRAFT" },
-      include: { organizer: true } as any,
-      orderBy: { createdAt: "desc" },
-    }),
-    prisma.auditLog.findMany({
-      take: 5,
-      orderBy: { createdAt: "desc" },
-      include: { actor: true },
-    }),
-  ]);
+  const totalUsers = await prisma.user.count();
+  const totalEvents = await prisma.event.count();
+  const pendingEventsData = await prisma.event.findMany({
+    where: { approvedByAdmin: false, status: "DRAFT" },
+    include: { organizer: true } as any,
+    orderBy: { createdAt: "desc" },
+  });
+  const auditLogsData = await prisma.auditLog.findMany({
+    take: 5,
+    orderBy: { createdAt: "desc" },
+    include: { actor: true },
+  });
 
   const pendingEvents = pendingEventsData as any[];
   const auditLogs = auditLogsData as any[];

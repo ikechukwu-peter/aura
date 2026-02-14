@@ -2,11 +2,11 @@ import Link from "next/link";
 import { getSession } from "@/lib/auth";
 import { Zap, User, LogOut, LayoutDashboard, Search, Menu, MessageSquare } from "lucide-react";
 import ThemeToggle from "./theme-toggle";
-import { getUnreadMessageCount } from "@/lib/messages/unread";
+import UnreadBadge from "@/components/messages/unread-badge";
+import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle, SheetDescription, SheetClose } from "@/components/ui/sheet";
 
 export default async function Navbar() {
   const session = await getSession();
-  const unreadCount = session ? await getUnreadMessageCount(session.userId) : 0;
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/60 backdrop-blur-2xl supports-[backdrop-filter]:bg-background/40">
@@ -64,11 +64,7 @@ export default async function Navbar() {
                     >
                       <MessageSquare className="h-4 w-4" />
                       Signals
-                      {unreadCount > 0 && (
-                        <span className="absolute -top-2 -right-2 h-4 w-4 rounded-full bg-aura-primary text-[8px] font-black text-white flex items-center justify-center animate-pulse">
-                          {unreadCount}
-                        </span>
-                      )}
+                      <UnreadBadge className="absolute -top-2 -right-2 h-4 w-4 rounded-full bg-aura-primary text-[8px] font-black text-white flex items-center justify-center animate-pulse" />
                     </Link>
                   </>
                 )}
@@ -79,11 +75,7 @@ export default async function Navbar() {
                   >
                     <MessageSquare className="h-4 w-4" />
                     Neural Link
-                    {unreadCount > 0 && (
-                      <span className="absolute -top-2 -right-2 h-4 w-4 rounded-full bg-aura-secondary text-[8px] font-black text-white flex items-center justify-center animate-pulse">
-                        {unreadCount}
-                      </span>
-                    )}
+                    <UnreadBadge className="absolute -top-2 -right-2 h-4 w-4 rounded-full bg-aura-secondary text-[8px] font-black text-white flex items-center justify-center animate-pulse" />
                   </Link>
                 )}
                 <Link
@@ -126,9 +118,106 @@ export default async function Navbar() {
           </div>
           <div className="h-6 w-px bg-border hidden md:block" />
           <ThemeToggle />
-          <button className="md:hidden p-2 text-foreground/40 hover:text-foreground cursor-pointer transition-colors" aria-label="Toggle menu">
-            <Menu className="h-5 w-5 sm:h-6 sm:w-6" />
-          </button>
+          <Sheet>
+            <SheetTrigger asChild>
+              <button className="md:hidden p-2 text-foreground/40 hover:text-foreground cursor-pointer transition-colors" aria-label="Toggle menu">
+                <Menu className="h-5 w-5 sm:h-6 sm:w-6" />
+              </button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-full sm:max-w-sm bg-background/90 backdrop-blur-2xl border-border/60 p-6">
+              <SheetHeader>
+                <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+                <SheetDescription className="sr-only">Main navigation links and account actions</SheetDescription>
+              </SheetHeader>
+              <div className="space-y-6">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-aura-primary to-aura-secondary flex items-center justify-center border border-aura-primary/20">
+                    <Zap className="h-5 w-5 text-white" />
+                  </div>
+                  <span className="font-black text-xl tracking-tighter text-foreground">Aura</span>
+                </div>
+                <nav className="flex flex-col gap-3">
+                  <SheetClose asChild>
+                    <Link href="/events" className="h-12 rounded-xl px-4 flex items-center text-sm font-bold tracking-wider border border-border/60 hover:border-aura-primary/30 hover:bg-aura-primary/5 transition-all">
+                      Discover
+                    </Link>
+                  </SheetClose>
+                  {session ? (
+                    <>
+                      {(session.role === "ADMIN" || (session.role as string) === "SUPER_ADMIN") && (
+                        <>
+                          <SheetClose asChild>
+                            <Link href="/admin/dashboard" className="h-12 rounded-xl px-4 flex items-center text-sm font-bold tracking-wider border border-border/60 hover:border-cyan-500/30 hover:bg-cyan-500/5 transition-all">
+                              Admin
+                            </Link>
+                          </SheetClose>
+                          <SheetClose asChild>
+                            <Link href="/admin/users" className="h-12 rounded-xl px-4 flex items-center text-sm font-bold tracking-wider border border-border/60 hover:border-cyan-500/30 hover:bg-cyan-500/5 transition-all">
+                              Citizens
+                            </Link>
+                          </SheetClose>
+                        </>
+                      )}
+                      {session.role === "ORGANIZER" && (
+                        <>
+                          <SheetClose asChild>
+                            <Link href="/organizer/dashboard" className="h-12 rounded-xl px-4 flex items-center text-sm font-bold tracking-wider border border-border/60 hover:border-indigo-500/30 hover:bg-indigo-500/5 transition-all">
+                              Dashboard
+                            </Link>
+                          </SheetClose>
+                          <SheetClose asChild>
+                            <Link href="/organizer/messages" className="h-12 rounded-xl px-4 flex items-center gap-2 text-sm font-bold tracking-wider border border-border/60 hover:border-foreground/30 hover:bg-foreground/5 transition-all">
+                              <MessageSquare className="h-4 w-4" />
+                              Signals
+                            </Link>
+                          </SheetClose>
+                        </>
+                      )}
+                      {session.role === "USER" && (
+                        <SheetClose asChild>
+                          <Link href="/dashboard/messages" className="h-12 rounded-xl px-4 flex items-center gap-2 text-sm font-bold tracking-wider border border-border/60 hover:border-foreground/30 hover:bg-foreground/5 transition-all">
+                            <MessageSquare className="h-4 w-4" />
+                            Neural Link
+                          </Link>
+                        </SheetClose>
+                      )}
+                      <SheetClose asChild>
+                        <Link href="/dashboard" className="h-12 rounded-xl px-4 flex items-center gap-2 text-sm font-bold tracking-wider border border-border/60 hover:border-foreground/30 hover:bg-foreground/5 transition-all">
+                          <LayoutDashboard className="h-4 w-4" />
+                          Wallet
+                        </Link>
+                      </SheetClose>
+                      <SheetClose asChild>
+                        <Link href="/profile" className="h-12 rounded-xl px-4 flex items-center gap-2 text-sm font-bold tracking-wider border border-border/60 hover:border-foreground/30 hover:bg-foreground/5 transition-all">
+                          <User className="h-4 w-4" />
+                          Identity
+                        </Link>
+                      </SheetClose>
+                      <SheetClose asChild>
+                        <Link href="/api/auth/logout" className="h-12 rounded-xl px-4 flex items-center gap-2 text-sm font-bold tracking-wider border border-border/60 text-red-500 hover:bg-red-500/5 transition-all">
+                          <LogOut className="h-4 w-4" />
+                          Log out
+                        </Link>
+                      </SheetClose>
+                    </>
+                  ) : (
+                    <>
+                      <SheetClose asChild>
+                        <Link href="/login" className="h-12 rounded-xl px-4 flex items-center text-sm font-bold tracking-wider border border-border/60 hover:border-foreground/30 hover:bg-foreground/5 transition-all">
+                          Log in
+                        </Link>
+                      </SheetClose>
+                      <SheetClose asChild>
+                        <Link href="/register" className="h-12 rounded-xl px-4 flex items-center justify-center text-sm font-bold tracking-wider rounded-xl bg-foreground text-background hover:opacity-90 transition-all">
+                          Get started
+                        </Link>
+                      </SheetClose>
+                    </>
+                  )}
+                </nav>
+              </div>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
     </header>

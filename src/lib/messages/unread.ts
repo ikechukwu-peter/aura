@@ -2,7 +2,7 @@ import { prisma } from "@/lib/prisma";
 
 export async function getUnreadMessageCount(userId: string) {
   try {
-    const count = await (prisma as any).message.count({
+    const count = await prisma.message.count({
       where: {
         receiverId: userId,
         isRead: false,
