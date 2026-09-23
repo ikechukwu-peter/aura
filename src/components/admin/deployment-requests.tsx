@@ -36,7 +36,7 @@ export function DeploymentRequests({ initialEvents }: DeploymentRequestsProps) {
 
       setEvents(events.filter(e => e.id !== eventId));
       toast.success(action === "APPROVE" ? "Event approved and published" : "Event rejected");
-    } catch (error) {
+    } catch {
       toast.error("An error occurred. Please try again.");
     } finally {
       setProcessingId(null);
@@ -47,7 +47,7 @@ export function DeploymentRequests({ initialEvents }: DeploymentRequestsProps) {
     return (
       <div className="py-24 text-center space-y-4">
         <div className="h-12 w-12 text-foreground/10 mx-auto" />
-        <p className="text-xs font-black uppercase tracking-widest text-foreground/20 italic">No pending deployments found.</p>
+        <p className="text-xs font-black uppercase tracking-widest text-muted-foreground/70 italic">No pending event submissions found.</p>
       </div>
     );
   }
@@ -55,18 +55,18 @@ export function DeploymentRequests({ initialEvents }: DeploymentRequestsProps) {
   return (
     <div className="divide-y divide-border">
       {events.map((event) => (
-        <div key={event.id} className="p-8 hover:bg-foreground/[0.01] transition-all flex flex-col md:flex-row md:items-center md:justify-between gap-6 group">
+        <div key={event.id} className="p-8 hover:bg-foreground/1 transition-all flex flex-col md:flex-row md:items-center md:justify-between gap-6 group">
           <div className="space-y-1">
-            <h4 className="font-black uppercase tracking-tight group-hover:text-aura-primary transition-colors">{event.title}</h4>
-            <p className="text-xs font-bold text-foreground/40 uppercase tracking-widest">
-              By {event.organizer.name || "Anonymous Agent"} • {formatDate(event.startTime)}
+            <h4 className="font-black uppercase tracking-tight group-hover:text-primary transition-colors">{event.title}</h4>
+            <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
+              By {event.organizer.name || "Anonymous organizer"} • {formatDate(event.startTime)}
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
             <Button 
-              variant="glass" 
+              variant="default" 
               size="sm" 
-              className="h-10 rounded-xl px-5 text-[10px] font-black uppercase tracking-widest text-aura-primary hover:bg-aura-primary/10 cursor-pointer disabled:opacity-50 w-full md:w-auto"
+              className="h-10 rounded-xl px-5 text-[10px] font-black uppercase tracking-widest cursor-pointer disabled:opacity-50 w-full md:w-auto"
               onClick={() => handleAction(event.id, "APPROVE")}
               disabled={processingId === event.id}
             >
@@ -74,9 +74,9 @@ export function DeploymentRequests({ initialEvents }: DeploymentRequestsProps) {
               Approve
             </Button>
             <Button 
-              variant="glass" 
+              variant="destructive" 
               size="sm" 
-              className="h-10 rounded-xl px-5 text-[10px] font-black uppercase tracking-widest text-red-500 hover:bg-red-500/10 cursor-pointer disabled:opacity-50 w-full md:w-auto"
+              className="h-10 rounded-xl px-5 text-[10px] font-black uppercase tracking-widest cursor-pointer disabled:opacity-50 w-full md:w-auto"
               onClick={() => handleAction(event.id, "REJECT")}
               disabled={processingId === event.id}
             >

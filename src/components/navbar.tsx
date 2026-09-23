@@ -1,52 +1,69 @@
 import Link from "next/link";
 import { getSession } from "@/lib/auth";
-import { Zap, User, LogOut, LayoutDashboard, Search, Menu, MessageSquare } from "lucide-react";
+import {
+  Ticket,
+  User,
+  LogOut,
+  LayoutDashboard,
+  Menu,
+  MessageSquare,
+  CalendarHeart,
+} from "lucide-react";
 import ThemeToggle from "./theme-toggle";
 import UnreadBadge from "@/components/messages/unread-badge";
-import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle, SheetDescription, SheetClose } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+  SheetClose,
+} from "@/components/ui/sheet";
 
 export default async function Navbar() {
   const session = await getSession();
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border bg-background/60 backdrop-blur-2xl supports-[backdrop-filter]:bg-background/40">
-      <div className="max-w-7xl mx-auto px-6 lg:px-12 flex h-20 items-center justify-between">
-        <div className="flex items-center gap-12">
-          <Link href="/" className="flex items-center space-x-2 sm:space-x-3 group">
-            <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-lg sm:xl bg-gradient-to-br from-aura-primary to-aura-secondary flex items-center justify-center group-hover:shadow-glow-aura transition-all duration-500 group-hover:scale-110 active:scale-95 border border-aura-primary/20">
-              <Zap className="h-4 w-4 sm:h-5 sm:w-5 text-white fill-white" />
+    <header className="sticky top-0 z-50 w-full border-b border-border bg-background/80 backdrop-blur supports-backdrop-filter:bg-background/60">
+      <div className="max-w-6xl mx-auto px-5 sm:px-6 lg:px-8 flex h-16 items-center justify-between gap-4">
+        <div className="flex items-center gap-8">
+          <Link href="/" className="flex items-center gap-2 group shrink-0">
+            <div className="h-8 w-8 rounded-md bg-primary flex items-center justify-center text-primary-foreground group-hover:opacity-90 transition-opacity">
+              <Ticket className="h-4 w-4" />
             </div>
-            <span className="inline-block font-black text-xl sm:text-2xl tracking-tighter bg-gradient-to-r from-foreground via-foreground to-foreground/40 bg-clip-text text-transparent group-hover:drop-shadow-sm transition-all">
+            <span className="serif text-xl font-semibold tracking-tight text-foreground">
               Aura
             </span>
           </Link>
-          <nav className="hidden md:flex gap-10">
+          <nav className="hidden md:flex items-center gap-6">
             <Link
               href="/events"
-              className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40 transition-all hover:text-foreground hover:drop-shadow-[0_0_8px_rgba(79,70,229,0.3)]"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
-              Discover
+              Browse events
             </Link>
           </nav>
         </div>
 
-        <div className="flex items-center gap-2 sm:gap-6">
-          <div className="hidden md:flex items-center gap-8">
+        <div className="flex items-center gap-2">
+          <div className="hidden md:flex items-center gap-5">
             {session ? (
               <>
-                {(session.role === "ADMIN" || (session.role as string) === "SUPER_ADMIN") && (
+                {(session.role === "ADMIN" ||
+                  (session.role as string) === "SUPER_ADMIN") && (
                   <>
                     <Link
                       href="/admin/dashboard"
-                      className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40 hover:text-cyan-500 transition-colors"
+                      className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                     >
                       Admin
                     </Link>
                     <Link
                       href="/admin/users"
-                      className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40 hover:text-cyan-500 transition-colors"
+                      className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                     >
-                      Citizens
+                      Users
                     </Link>
                   </>
                 )}
@@ -54,47 +71,55 @@ export default async function Navbar() {
                   <>
                     <Link
                       href="/organizer/dashboard"
-                      className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40 hover:text-indigo-500 transition-colors"
+                      className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                     >
                       Dashboard
                     </Link>
                     <Link
-                      href="/organizer/messages"
-                      className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40 hover:text-foreground transition-all relative"
+                      href="/organizer/events/new"
+                      className="text-sm text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-1.5"
                     >
-                      <MessageSquare className="h-4 w-4" />
-                      Signals
-                      <UnreadBadge className="absolute -top-2 -right-2 h-4 w-4 rounded-full bg-aura-primary text-[8px] font-black text-white flex items-center justify-center animate-pulse" />
+                      <CalendarHeart className="h-3.5 w-3.5" />
+                      New event
+                    </Link>
+                    <Link
+                      href="/organizer/messages"
+                      className="text-sm text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-1.5 relative"
+                    >
+                      <MessageSquare className="h-3.5 w-3.5" />
+                      Messages
+                      <UnreadBadge className="absolute -top-1.5 -right-3 h-4 min-w-4 px-1 rounded-full bg-primary text-[10px] font-medium text-primary-foreground flex items-center justify-center" />
                     </Link>
                   </>
                 )}
                 {session.role === "USER" && (
                   <Link
                     href="/dashboard/messages"
-                    className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40 hover:text-foreground transition-all relative"
+                    className="text-sm text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-1.5 relative"
                   >
-                    <MessageSquare className="h-4 w-4" />
-                    Neural Link
-                    <UnreadBadge className="absolute -top-2 -right-2 h-4 w-4 rounded-full bg-aura-secondary text-[8px] font-black text-white flex items-center justify-center animate-pulse" />
+                    <MessageSquare className="h-3.5 w-3.5" />
+                    Messages
+                    <UnreadBadge className="absolute -top-1.5 -right-3 h-4 min-w-4 px-1 rounded-full bg-primary text-[10px] font-medium text-primary-foreground flex items-center justify-center" />
                   </Link>
                 )}
                 <Link
                   href="/dashboard"
-                  className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40 hover:text-foreground transition-all"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-1.5"
                 >
-                  <LayoutDashboard className="h-4 w-4" />
-                  Wallet
+                  <LayoutDashboard className="h-3.5 w-3.5" />
+                  My tickets
                 </Link>
                 <Link
                   href="/profile"
-                  className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40 hover:text-foreground transition-all"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-1.5"
                 >
-                  <User className="h-4 w-4" />
-                  Identity
+                  <User className="h-3.5 w-3.5" />
+                  Profile
                 </Link>
                 <Link
                   href="/api/auth/logout"
-                  className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-foreground/20 hover:text-red-500 transition-all"
+                  className="p-1.5 rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                  aria-label="Sign out"
                 >
                   <LogOut className="h-4 w-4" />
                 </Link>
@@ -103,57 +128,75 @@ export default async function Navbar() {
               <>
                 <Link
                   href="/login"
-                  className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40 hover:text-foreground transition-all"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  Log in
+                  Sign in
                 </Link>
                 <Link
                   href="/register"
-                  className="inline-flex h-11 items-center justify-center rounded-xl bg-foreground text-background px-6 text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-foreground/5 hover:scale-[1.05] active:scale-95 transition-all"
+                  className="inline-flex h-9 items-center justify-center rounded-md bg-primary text-primary-foreground px-4 text-sm font-medium hover:bg-primary/90 transition-colors"
                 >
-                  Get started
+                  Create account
                 </Link>
               </>
             )}
           </div>
-          <div className="h-6 w-px bg-border hidden md:block" />
           <ThemeToggle />
           <Sheet>
             <SheetTrigger asChild>
-              <button className="md:hidden p-2 text-foreground/40 hover:text-foreground cursor-pointer transition-colors" aria-label="Toggle menu">
-                <Menu className="h-5 w-5 sm:h-6 sm:w-6" />
+              <button
+                className="md:hidden p-2 text-muted-foreground hover:text-foreground rounded-md transition-colors"
+                aria-label="Toggle menu"
+              >
+                <Menu className="h-5 w-5" />
               </button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-full sm:max-w-sm bg-background/90 backdrop-blur-2xl border-border/60 p-6">
+            <SheetContent
+              side="right"
+              className="w-full sm:max-w-sm border-border p-6 bg-background"
+            >
               <SheetHeader>
-                <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
-                <SheetDescription className="sr-only">Main navigation links and account actions</SheetDescription>
+                <SheetTitle className="sr-only">Navigation menu</SheetTitle>
+                <SheetDescription className="sr-only">
+                  Main navigation links and account actions
+                </SheetDescription>
               </SheetHeader>
               <div className="space-y-6">
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-aura-primary to-aura-secondary flex items-center justify-center border border-aura-primary/20">
-                    <Zap className="h-5 w-5 text-white" />
+                <div className="flex items-center gap-3 pb-3 border-b border-border">
+                  <div className="h-9 w-9 rounded-md bg-primary flex items-center justify-center text-primary-foreground">
+                    <Ticket className="h-4 w-4" />
                   </div>
-                  <span className="font-black text-xl tracking-tighter text-foreground">Aura</span>
+                  <span className="serif text-lg font-semibold text-foreground">Aura</span>
                 </div>
-                <nav className="flex flex-col gap-3">
+                <nav className="flex flex-col gap-1">
                   <SheetClose asChild>
-                    <Link href="/events" className="h-12 rounded-xl px-4 flex items-center text-sm font-bold tracking-wider border border-border/60 hover:border-aura-primary/30 hover:bg-aura-primary/5 transition-all">
-                      Discover
+                    <Link
+                      href="/events"
+                      className="h-10 px-3 rounded-md text-sm font-medium text-foreground hover:bg-accent transition-colors flex items-center"
+                    >
+                      Browse events
                     </Link>
                   </SheetClose>
                   {session ? (
                     <>
-                      {(session.role === "ADMIN" || (session.role as string) === "SUPER_ADMIN") && (
+                      <div className="h-px bg-border my-2" />
+                      {(session.role === "ADMIN" ||
+                        (session.role as string) === "SUPER_ADMIN") && (
                         <>
                           <SheetClose asChild>
-                            <Link href="/admin/dashboard" className="h-12 rounded-xl px-4 flex items-center text-sm font-bold tracking-wider border border-border/60 hover:border-cyan-500/30 hover:bg-cyan-500/5 transition-all">
-                              Admin
+                            <Link
+                              href="/admin/dashboard"
+                              className="h-10 px-3 rounded-md text-sm font-medium text-foreground hover:bg-accent transition-colors flex items-center"
+                            >
+                              Admin dashboard
                             </Link>
                           </SheetClose>
                           <SheetClose asChild>
-                            <Link href="/admin/users" className="h-12 rounded-xl px-4 flex items-center text-sm font-bold tracking-wider border border-border/60 hover:border-cyan-500/30 hover:bg-cyan-500/5 transition-all">
-                              Citizens
+                            <Link
+                              href="/admin/users"
+                              className="h-10 px-3 rounded-md text-sm font-medium text-foreground hover:bg-accent transition-colors flex items-center"
+                            >
+                              Manage users
                             </Link>
                           </SheetClose>
                         </>
@@ -161,55 +204,85 @@ export default async function Navbar() {
                       {session.role === "ORGANIZER" && (
                         <>
                           <SheetClose asChild>
-                            <Link href="/organizer/dashboard" className="h-12 rounded-xl px-4 flex items-center text-sm font-bold tracking-wider border border-border/60 hover:border-indigo-500/30 hover:bg-indigo-500/5 transition-all">
-                              Dashboard
+                            <Link
+                              href="/organizer/dashboard"
+                              className="h-10 px-3 rounded-md text-sm font-medium text-foreground hover:bg-accent transition-colors flex items-center"
+                            >
+                              Organizer dashboard
                             </Link>
                           </SheetClose>
                           <SheetClose asChild>
-                            <Link href="/organizer/messages" className="h-12 rounded-xl px-4 flex items-center gap-2 text-sm font-bold tracking-wider border border-border/60 hover:border-foreground/30 hover:bg-foreground/5 transition-all">
-                              <MessageSquare className="h-4 w-4" />
-                              Signals
+                            <Link
+                              href="/organizer/events/new"
+                              className="h-10 px-3 rounded-md text-sm font-medium text-foreground hover:bg-accent transition-colors flex items-center"
+                            >
+                              Create event
+                            </Link>
+                          </SheetClose>
+                          <SheetClose asChild>
+                            <Link
+                              href="/organizer/messages"
+                              className="h-10 px-3 rounded-md text-sm font-medium text-foreground hover:bg-accent transition-colors flex items-center gap-2"
+                            >
+                              Messages
                             </Link>
                           </SheetClose>
                         </>
                       )}
                       {session.role === "USER" && (
                         <SheetClose asChild>
-                          <Link href="/dashboard/messages" className="h-12 rounded-xl px-4 flex items-center gap-2 text-sm font-bold tracking-wider border border-border/60 hover:border-foreground/30 hover:bg-foreground/5 transition-all">
-                            <MessageSquare className="h-4 w-4" />
-                            Neural Link
+                          <Link
+                            href="/dashboard/messages"
+                            className="h-10 px-3 rounded-md text-sm font-medium text-foreground hover:bg-accent transition-colors flex items-center gap-2"
+                          >
+                            Messages
                           </Link>
                         </SheetClose>
                       )}
                       <SheetClose asChild>
-                        <Link href="/dashboard" className="h-12 rounded-xl px-4 flex items-center gap-2 text-sm font-bold tracking-wider border border-border/60 hover:border-foreground/30 hover:bg-foreground/5 transition-all">
-                          <LayoutDashboard className="h-4 w-4" />
-                          Wallet
+                        <Link
+                          href="/dashboard"
+                          className="h-10 px-3 rounded-md text-sm font-medium text-foreground hover:bg-accent transition-colors flex items-center gap-2"
+                        >
+                          My tickets
                         </Link>
                       </SheetClose>
                       <SheetClose asChild>
-                        <Link href="/profile" className="h-12 rounded-xl px-4 flex items-center gap-2 text-sm font-bold tracking-wider border border-border/60 hover:border-foreground/30 hover:bg-foreground/5 transition-all">
-                          <User className="h-4 w-4" />
-                          Identity
+                        <Link
+                          href="/profile"
+                          className="h-10 px-3 rounded-md text-sm font-medium text-foreground hover:bg-accent transition-colors flex items-center gap-2"
+                        >
+                          Profile
                         </Link>
                       </SheetClose>
+                      <div className="h-px bg-border my-2" />
                       <SheetClose asChild>
-                        <Link href="/api/auth/logout" className="h-12 rounded-xl px-4 flex items-center gap-2 text-sm font-bold tracking-wider border border-border/60 text-red-500 hover:bg-red-500/5 transition-all">
+                        <Link
+                          href="/api/auth/logout"
+                          className="h-10 px-3 rounded-md text-sm font-medium text-destructive hover:bg-destructive/10 transition-colors flex items-center gap-2"
+                        >
                           <LogOut className="h-4 w-4" />
-                          Log out
+                          Sign out
                         </Link>
                       </SheetClose>
                     </>
                   ) : (
                     <>
+                      <div className="h-px bg-border my-2" />
                       <SheetClose asChild>
-                        <Link href="/login" className="h-12 rounded-xl px-4 flex items-center text-sm font-bold tracking-wider border border-border/60 hover:border-foreground/30 hover:bg-foreground/5 transition-all">
-                          Log in
+                        <Link
+                          href="/login"
+                          className="h-10 px-3 rounded-md text-sm font-medium text-foreground hover:bg-accent transition-colors flex items-center"
+                        >
+                          Sign in
                         </Link>
                       </SheetClose>
                       <SheetClose asChild>
-                        <Link href="/register" className="h-12 rounded-xl px-4 flex items-center justify-center text-sm font-bold tracking-wider rounded-xl bg-foreground text-background hover:opacity-90 transition-all">
-                          Get started
+                        <Link
+                          href="/register"
+                          className="h-10 px-3 rounded-md text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors flex items-center justify-center"
+                        >
+                          Create account
                         </Link>
                       </SheetClose>
                     </>

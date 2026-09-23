@@ -6,7 +6,7 @@ export function FeaturedEventsSkeleton() {
     <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
       {[1, 2, 3].map((i) => (
         <Card key={i} className="overflow-hidden flex flex-col p-0 bg-background border-border/60 rounded-[2.5rem] shadow-card">
-          <div className="aspect-[16/11] relative bg-foreground/[0.03]">
+          <div className="aspect-16/11 relative bg-foreground/3">
             <Skeleton className="absolute inset-0 w-full h-full rounded-none" />
             <div className="absolute top-6 left-6">
               <Skeleton className="h-6 w-24 rounded-full" />

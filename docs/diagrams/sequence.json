@@ -1,0 +1,113 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "Aura ticketing lifecycle v1",
+    "quality_profile": "showcase",
+    "column_fit": "spread",
+    "viewBox": [1340, 940],
+    "views": [
+      {
+        "id": "reserve",
+        "label": "Reserve + hold",
+        "focus": ["buyer", "actions", "ticketing", "pg"],
+        "note": "CAS predicate + idempotency key inside one $transaction. Hold counts against capacity for the user's 10-minute window."
+      },
+      {
+        "id": "confirm",
+        "label": "Confirm → signed QR",
+        "focus": ["buyer", "actions", "ticketing", "pg", "audit"],
+        "note": "Confirm runs after payment succeeds. ticketIndex UNIQUE + signed QR. AuditLog appends TICKETS_ISSUED."
+      },
+      {
+        "id": "scan",
+        "label": "Door scan",
+        "focus": ["door", "actions", "pg"],
+        "note": "Door verifies signature offline first. Photo forgeries fail at step 1, zero DB round-trip. Final USED write re-checks ownership."
+      },
+      {
+        "id": "drift",
+        "label": "Drift & self-heal",
+        "focus": ["reconciler", "pg", "audit"],
+        "note": "Reconciler runs after every TTL sweep + on a 5-min cron. Any mismatch → corrective UPDATE + CAPACITY_RECONCILED in append-only log."
+      }
+    ]
+  },
+  "participants": [
+    {"id": "buyer", "type": "frontend", "label": "Buyer", "sublabel": "browser"},
+    {"id": "door", "type": "frontend", "label": "Door scanner", "sublabel": "tablet"},
+    {"id": "actions", "type": "backend", "label": "Server Actions", "sublabel": "RBAC re-check"},
+    {"id": "ticketing", "type": "backend", "label": "ticketing.ts", "sublabel": "4-tier core"},
+    {"id": "pg", "type": "database", "label": "Postgres", "sublabel": "CAS + UNIQUE"},
+    {"id": "audit", "type": "database", "label": "AuditLog", "sublabel": "append-only"},
+    {"id": "reconciler", "type": "backend", "label": "TTL + reconciler", "sublabel": "cron"}
+  ],
+  "segments": [
+    {"from": 150, "to": 300, "label": "Reserve + 10-min hold"},
+    {"from": 316, "to": 470, "label": "Confirm → signed QR"},
+    {"from": 486, "to": 640, "label": "Door scan"},
+    {"from": 656, "to": 860, "label": "Drift & self-heal"}
+  ],
+  "messages": [
+    {"id": "reserve-http",   "from": "buyer",      "to": "actions",    "y": 180, "label": "POST reserve(idempotencyKey, N)",                  "variant": "default"},
+    {"id": "idem-check",    "from": "ticketing",  "to": "pg",         "y": 208, "label": "findUnique Reservation idemKey (Tier 2)",             "variant": "default"},
+    {"id": "cas",           "from": "ticketing",  "to": "pg",         "y": 236, "label": "UPDATE Event WHERE sold <= cap - N (Tier 1)",         "variant": "emphasis"},
+    {"id": "insert-res",    "from": "ticketing",  "to": "pg",         "y": 264, "label": "INSERT Reservation ACTIVE, expiresAt +10m",           "variant": "default"},
+    {"id": "res-audit",     "from": "pg",         "to": "audit",      "y": 280, "label": "RESERVATION_CREATED",                                  "variant": "default"},
+    {"id": "res-ok",        "from": "actions",    "to": "buyer",      "y": 292, "label": "201 { reservationId, expiresAt }",                     "variant": "emphasis"},
+
+    {"id": "confirm-http",  "from": "buyer",      "to": "actions",    "y": 340, "label": "POST confirm(reservationId) [paid]",                   "variant": "default"},
+    {"id": "check-held",    "from": "ticketing",  "to": "pg",         "y": 368, "label": "assert ACTIVE + not expired",                           "variant": "default"},
+    {"id": "create-tix",    "from": "ticketing",  "to": "pg",         "y": 396, "label": "INSERT Ticket (eventId, ticketIndex) UNIQUE (Tier 3)",  "variant": "emphasis"},
+    {"id": "sign-qr",       "from": "ticketing",  "to": "audit",      "y": 424, "label": "HMAC qrPayload signed (TICKET_SECRET)",                "variant": "security"},
+    {"id": "confirm-audit", "from": "pg",         "to": "audit",      "y": 460, "label": "TICKETS_ISSUED",                                        "variant": "default"},
+    {"id": "confirm-ok",    "from": "actions",    "to": "buyer",      "y": 472, "label": "201 [{ qrPayload, ticketCode }]",                      "variant": "emphasis"},
+
+    {"id": "scan-local",    "from": "door",       "to": "reconciler", "y": 512, "label": "verifyTicketToken (offline)",                          "variant": "security"},
+    {"id": "scan-http",     "from": "door",       "to": "actions",    "y": 540, "label": "POST /organizer/checkin",                               "variant": "default"},
+    {"id": "scan-pg",       "from": "ticketing",  "to": "pg",         "y": 570, "label": "Ticket ISSUED → USED + validatedBy",                   "variant": "emphasis"},
+    {"id": "scan-audit",    "from": "pg",         "to": "audit",      "y": 602, "label": "TICKET_SCANNED",                                        "variant": "default"},
+
+    {"id": "sweep",         "from": "reconciler", "to": "pg",         "y": 700, "label": "findMany ACTIVE + expired, revert sold N",              "variant": "dashed"},
+    {"id": "recon",         "from": "reconciler", "to": "pg",         "y": 750, "label": "SELECT count() → compare sold → corrective UPDATE",    "variant": "dashed"},
+    {"id": "recon-audit",   "from": "reconciler", "to": "audit",      "y": 820, "label": "CAPACITY_RECONCILED if mismatch",                      "variant": "dashed"}
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "What the CAS line actually enforces",
+      "items": [
+        "sold is authoritative inside a single atomic UPDATE statement",
+        "Two buyers at capacity-1: exactly one sees 1 row affected",
+        "The other gets NotFoundError → sold out"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Why 4 tiers, not 1 clever line",
+      "items": [
+        "Tier 2 catches retries on flaky 4G",
+        "Tier 3 catches refactors that bypass CAS",
+        "Tier 4 closes drift windows introduced by admin DB edits"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "Two signing secrets, not one",
+      "items": [
+        "JWT_SECRET → session cookies (httpOnly, 2h)",
+        "TICKET_SECRET → door QR payloads",
+        "Rotating one does not invalidate the other; plan an overlap window for QR rotation"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Every state change shares one rule",
+      "items": [
+        "AuditLog append-only row in the same transaction as the write",
+        "No UPDATE or DELETE against AuditLog rows anywhere in the app",
+        "Prod recommendation: Postgres RLS that enforces this for the app DB user"
+      ]
+    }
+  ]
+}

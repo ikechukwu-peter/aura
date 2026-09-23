@@ -3,21 +3,31 @@
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Ticket, LogIn, Mail, Lock, Loader2, ArrowRight, ShieldCheck, Eye, EyeOff } from "lucide-react";
+import {
+  Ticket,
+  Mail,
+  Lock,
+  Loader2,
+  ArrowRight,
+  ShieldCheck,
+  Eye,
+  EyeOff,
+  Calendar,
+  MapPin,
+} from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect") || "/";
-  
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
-  
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -45,142 +55,235 @@ export default function LoginPage() {
         throw new Error(data.error || "Login failed");
       }
 
-      // If no explicit redirect is provided, go to the role-specific dashboard
       if (redirect === "/") {
         const userRole = data.user.role;
-        const target = userRole === "ADMIN" ? "/admin/dashboard" : userRole === "ORGANIZER" ? "/organizer/dashboard" : "/dashboard";
+        const target =
+          userRole === "ADMIN"
+            ? "/admin/dashboard"
+            : userRole === "ORGANIZER"
+              ? "/organizer/dashboard"
+              : "/dashboard";
         router.push(target);
       } else {
         router.push(redirect);
       }
-      
+
       router.refresh();
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Login failed");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="container min-h-[calc(100vh-120px)] flex items-center justify-center py-12">
-      <div className="w-full max-w-md space-y-8 relative">
-        {/* Decorative background glow */}
-        <div className="absolute -top-24 -left-24 h-64 w-64 bg-aura-primary/10 rounded-full blur-3xl -z-10 animate-pulse" />
-        <div className="absolute -bottom-24 -right-24 h-64 w-64 bg-aura-secondary/10 rounded-full blur-3xl -z-10 animate-pulse delay-1000" />
-
-        <div className="text-center space-y-4">
-          <div className="inline-flex items-center justify-center h-20 w-20 rounded-3xl bg-aura-primary shadow-glow-aura mb-4 group hover:scale-110 transition-transform duration-500">
-            <Ticket className="h-10 w-10 text-white" />
-          </div>
-          <h1 className="text-4xl font-black tracking-tighter">
-            Welcome <span className="bg-gradient-to-r from-aura-primary to-aura-secondary bg-clip-text text-transparent uppercase">Back</span>
-          </h1>
-          <p className="text-foreground/40 font-bold tracking-widest text-xs uppercase">
-            Enter your credentials to access your portal
-          </p>
-        </div>
-
-        <Card className="bg-foreground/[0.03] border-border shadow-2xl backdrop-blur-2xl rounded-[2.5rem] overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-aura-primary via-aura-secondary to-aura-primary opacity-50" />
-          
-          <CardHeader className="p-10 pb-4">
-            <CardTitle className="text-xl font-black tracking-tight flex items-center gap-3">
-              <LogIn className="h-5 w-5 text-aura-primary" />
-              Secure login
-            </CardTitle>
-          </CardHeader>
-          
-          <CardContent className="p-10 pt-4 space-y-6">
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="space-y-3">
-                <Label htmlFor="email" className="text-[10px] font-black uppercase tracking-widest text-foreground/40 ml-1">Email address</Label>
-                <div className="relative group">
-                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground/20 group-focus-within:text-aura-primary transition-colors" />
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    placeholder="name@example.com"
-                    required
-                    value={formData.email}
-                    onChange={handleChange}
-                    className="h-14 pl-12 bg-foreground/[0.03] border-border rounded-2xl focus:ring-aura-primary/20 text-foreground font-medium"
-                  />
-                </div>
+    <div className="min-h-[calc(100vh-80px)] w-full">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-10 md:py-16">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-10 lg:gap-16 items-center">
+          {/* Brand / Editorial column */}
+          <div className="lg:col-span-2 order-2 lg:order-1 space-y-10">
+            <div className="space-y-5">
+              <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground">
+                <Ticket className="h-3.5 w-3.5 text-primary" />
+                Aura Ticketing
               </div>
-
-              <div className="space-y-3">
-                <div className="flex items-center justify-between px-1">
-                  <Label htmlFor="password" className="text-[10px] font-black uppercase tracking-widest text-foreground/40">Password</Label>
-                  <Link href="#" className="text-[9px] font-black uppercase tracking-widest text-aura-primary hover:text-aura-primary/80 transition-colors">Forgot?</Link>
-                </div>
-                <div className="relative group">
-                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground/20 group-focus-within:text-aura-primary transition-colors" />
-                  <Input
-                    id="password"
-                    name="password"
-                    type={showPassword ? "text" : "password"}
-                    placeholder="••••••••"
-                    required
-                    value={formData.password}
-                    onChange={handleChange}
-                    className="h-14 pl-12 pr-12 bg-foreground/[0.03] border-border rounded-2xl focus:ring-aura-primary/20 text-foreground font-medium"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-foreground/20 hover:text-aura-primary transition-colors cursor-pointer"
-                  >
-                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </button>
-                </div>
-              </div>
-
-              {error && (
-                <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 text-xs font-bold flex items-center gap-3 animate-in fade-in slide-in-from-top-2">
-                  <div className="h-2 w-2 rounded-full bg-red-500 animate-pulse" />
-                  {error}
-                </div>
-              )}
-
-              <Button 
-                type="submit" 
-                disabled={loading}
-                className="w-full h-14 rounded-2xl bg-aura-primary hover:bg-aura-primary/90 text-white shadow-glow-aura font-black uppercase tracking-widest text-xs group transition-all"
-              >
-                {loading ? (
-                  <Loader2 className="h-5 w-5 animate-spin" />
-                ) : (
-                  <span className="flex items-center gap-2">
-                    Access portal <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                  </span>
-                )}
-              </Button>
-            </form>
-          </CardContent>
-
-          <CardFooter className="p-10 pt-0 flex flex-col space-y-6">
-            <div className="flex items-center gap-4 w-full">
-              <div className="h-px flex-1 bg-foreground/5" />
-              <span className="text-[10px] font-black text-foreground/20 uppercase tracking-widest">or</span>
-              <div className="h-px flex-1 bg-foreground/5" />
-            </div>
-
-            <Button variant="glass" className="w-full h-14 rounded-2xl font-black uppercase tracking-widest text-[10px]" asChild>
-              <Link href="/register">
-                Create new account
-              </Link>
-            </Button>
-
-            <div className="flex items-center justify-center gap-2 pt-2">
-              <ShieldCheck className="h-3 w-3 text-green-500 dark:text-green-400/60" />
-              <p className="text-[9px] text-foreground/20 font-black uppercase tracking-widest">
-                End-to-end encrypted session // secure
+              <h1 className="serif text-4xl sm:text-5xl font-semibold leading-[1.05] text-foreground">
+                Welcome back.
+                <br />
+                <span className="text-primary">Let&apos;s get you in.</span>
+              </h1>
+              <p className="text-base text-muted-foreground leading-relaxed max-w-md">
+                Sign in to browse events, access your tickets, or manage your
+                event listings. Everything is secured end-to-end.
               </p>
             </div>
-          </CardFooter>
-        </Card>
+
+            {/* Trust panel — editorial card, not form chrome */}
+            <div className="rounded-xl border border-border bg-card p-5 space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="h-9 w-9 rounded-md bg-verified/10 text-verified flex items-center justify-center">
+                  <ShieldCheck className="h-4.5 w-4.5" />
+                </div>
+                <div className="space-y-0.5">
+                  <p className="text-sm font-semibold text-foreground">
+                    Your tickets, and data, stay yours.
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Signed session cookies · bcrypt credentials · no third-party
+                    analytics.
+                  </p>
+                </div>
+              </div>
+
+              <div className="pt-4 border-t border-border space-y-3">
+                <p className="text-xs font-medium text-foreground/80 uppercase tracking-wider">
+                  Coming up
+                </p>
+                <div className="space-y-2.5">
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center gap-2.5 text-foreground min-w-0">
+                      <Calendar className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                      <span className="truncate">Lagos Jazz Weekend</span>
+                    </div>
+                    <span className="text-xs text-muted-foreground shrink-0 ml-3">
+                      Fri · 7:00 PM
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center gap-2.5 text-foreground min-w-0">
+                      <MapPin className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                      <span className="truncate">Amber Hall, Victoria Island</span>
+                    </div>
+                    <span className="text-xs text-muted-foreground shrink-0 ml-3">
+                      Sold out
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <p className="text-xs text-muted-foreground">
+              Don&apos;t have an account yet?{" "}
+              <Link
+                href="/register"
+                className="text-primary font-medium underline-offset-4 hover:underline"
+              >
+                Create one here
+              </Link>
+              .
+            </p>
+          </div>
+
+          {/* Form column */}
+          <div className="lg:col-span-3 order-1 lg:order-2">
+            <div className="mx-auto w-full max-w-md">
+              <div className="rounded-xl border border-border bg-card shadow-sm overflow-hidden">
+                <div className="p-7 sm:p-9 space-y-7">
+                  <div className="space-y-1.5">
+                    <h2 className="serif text-2xl font-semibold text-foreground">
+                      Sign in
+                    </h2>
+                    <p className="text-sm text-muted-foreground">
+                      Use the email and password you registered with.
+                    </p>
+                  </div>
+
+                  <form onSubmit={handleSubmit} className="space-y-5">
+                    <div className="space-y-2">
+                      <Label htmlFor="email" className="text-sm font-medium">
+                        Email
+                      </Label>
+                      <div className="relative">
+                        <Mail className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Input
+                          id="email"
+                          name="email"
+                          type="email"
+                          autoComplete="email"
+                          placeholder="you@example.com"
+                          required
+                          value={formData.email}
+                          onChange={handleChange}
+                          className="h-11 pl-10 text-sm"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <Label
+                          htmlFor="password"
+                          className="text-sm font-medium"
+                        >
+                          Password
+                        </Label>
+                        <button
+                          type="button"
+                          className="text-xs text-primary font-medium hover:underline underline-offset-4"
+                          tabIndex={-1}
+                        >
+                          Forgot password?
+                        </button>
+                      </div>
+                      <div className="relative">
+                        <Lock className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Input
+                          id="password"
+                          name="password"
+                          type={showPassword ? "text" : "password"}
+                          autoComplete="current-password"
+                          placeholder="Enter your password"
+                          required
+                          value={formData.password}
+                          onChange={handleChange}
+                          className="h-11 pl-10 pr-10 text-sm"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword((s) => !s)}
+                          className="absolute right-2.5 top-1/2 -translate-y-1/2 h-7 w-7 inline-flex items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                          aria-label={
+                            showPassword ? "Hide password" : "Show password"
+                          }
+                        >
+                          {showPassword ? (
+                            <EyeOff className="h-4 w-4" />
+                          ) : (
+                            <Eye className="h-4 w-4" />
+                          )}
+                        </button>
+                      </div>
+                    </div>
+
+                    {error && (
+                      <div
+                        role="alert"
+                        className="rounded-md border border-destructive/30 bg-destructive/5 px-3.5 py-2.5 text-sm text-destructive"
+                      >
+                        {error}
+                      </div>
+                    )}
+
+                    <Button
+                      type="submit"
+                      disabled={loading}
+                      size="lg"
+                      className="w-full h-11 text-sm"
+                    >
+                      {loading ? (
+                        <span className="inline-flex items-center gap-2">
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          Signing in…
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-2">
+                          Sign in
+                          <ArrowRight className="h-4 w-4" />
+                        </span>
+                      )}
+                    </Button>
+                  </form>
+
+                  <div className="pt-2 border-t border-border">
+                    <Button
+                      variant="outline"
+                      size="lg"
+                      className="w-full h-11 text-sm"
+                      asChild
+                    >
+                      <Link href="/register">Create account</Link>
+                    </Button>
+                  </div>
+                </div>
+              </div>
+
+              <p className="mt-5 text-center text-xs text-muted-foreground inline-flex items-center justify-center gap-2 w-full">
+                <ShieldCheck className="h-3.5 w-3.5 text-verified" />
+                Secured with signed sessions · verified on every request
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

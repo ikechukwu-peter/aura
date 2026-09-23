@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Calendar, MapPin, Search as SearchIcon, ArrowRight, Zap } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import Link from "next/link";
+import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { EventFilters } from "@/components/events/event-filters";
 import { Prisma } from "@prisma/client";
@@ -31,7 +32,7 @@ export default async function EventsPage({
   const { q, category, minPrice, maxPrice, startDate, endDate, sort, location, available, freeOnly } = await searchParams;
 
   // Build the orderBy object based on the sort parameter
-  let orderBy: any = { startTime: "asc" };
+  let orderBy: Record<string, string> = { startTime: "asc" };
   if (sort === "date_desc") orderBy = { startTime: "desc" };
   else if (sort === "price_asc") orderBy = { price: "asc" };
   else if (sort === "price_desc") orderBy = { price: "desc" };
@@ -91,37 +92,32 @@ export default async function EventsPage({
     <div className="py-16 space-y-16">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-10">
         <div className="space-y-5">
-          <div className="inline-flex items-center rounded-full border border-aura-primary/20 bg-aura-primary/5 px-4 py-1.5 text-[10px] font-black uppercase tracking-widest text-aura-primary backdrop-blur-md">
-            <span className="flex h-2 w-2 rounded-full bg-aura-primary mr-3 animate-pulse shadow-glow-aura" />
-            Discover experiences
-          </div>
-          <h1 className="text-6xl md:text-7xl font-black tracking-tighter leading-none text-foreground">
-            Find your next <br />
-            <span className="bg-gradient-to-r from-aura-primary via-aura-secondary to-aura-accent bg-clip-text text-transparent animate-gradient-x uppercase">adventure</span>
+          <h1 className="text-4xl md:text-5xl font-black tracking-tighter leading-none text-foreground">
+            Find your next event
           </h1>
         </div>
 
         <div className="flex flex-col gap-4 w-full md:w-auto">
           <form className="flex w-full md:w-auto items-center gap-4">
-            <div className="relative flex-1 md:w-[450px]">
-              <SearchIcon className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground/40" />
+            <div className="relative flex-1 md:w-112.5">
+              <SearchIcon className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 name="q"
                 placeholder="Search events, locations, categories..."
                 defaultValue={q}
-                className="pl-14 h-16 bg-background border-border/60 backdrop-blur-md focus:border-aura-primary/50 transition-all rounded-2xl font-bold shadow-sm"
+                className="pl-14 h-12 bg-background border-border focus:border-primary/50 transition-all rounded-lg font-medium"
               />
             </div>
-            <Button type="submit" className="h-16 px-10 shadow-glow-aura rounded-2xl font-black uppercase tracking-widest text-xs">Search</Button>
+            <Button type="submit" variant="default" className="h-12 px-6 rounded-lg font-semibold">Search</Button>
           </form>
           
           <div className="flex justify-end">
-            <EventFilters categories={categories} />
+            <EventFilters />
           </div>
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-4 pb-4">
+      <div className="flex flex-wrap gap-3 pb-4">
         {(() => {
           const currentParams = new URLSearchParams();
           if (q) currentParams.set("q", q);
@@ -141,8 +137,8 @@ export default async function EventsPage({
           return (
             <>
               <Button
-                variant={!category || category === "all" ? "default" : "glass"}
-                className={`rounded-full h-11 px-8 cursor-pointer font-black uppercase tracking-widest text-[10px] ${(!category || category === "all") ? 'bg-aura-primary shadow-glow-aura border-aura-primary' : ''}`}
+                variant={!category || category === "all" ? "default" : "outline"}
+                className="rounded-full h-9 px-5 cursor-pointer text-sm font-medium"
                 asChild
               >
                 <Link href={allHref}>All categories</Link>
@@ -153,8 +149,8 @@ export default async function EventsPage({
                 return (
                   <Button
                     key={cat}
-                    variant={category === cat ? "default" : "glass"}
-                    className={`rounded-full h-11 px-8 cursor-pointer font-black uppercase tracking-widest text-[10px] ${category === cat ? 'bg-aura-primary shadow-glow-aura border-aura-primary' : ''}`}
+                    variant={category === cat ? "default" : "outline"}
+                    className="rounded-full h-9 px-5 cursor-pointer text-sm font-medium"
                     asChild
                   >
                     <Link href={`/events?${catParams.toString()}`}>
@@ -169,56 +165,57 @@ export default async function EventsPage({
       </div>
 
       {events.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {events.map((event) => (
-            <Card key={event.id} className="overflow-hidden group flex flex-col p-0 bg-background border border-border/60 hover:border-aura-primary/30 transition-all duration-500 rounded-[2.5rem] shadow-card hover:shadow-2xl">
-              <div className="aspect-[16/11] relative bg-foreground/[0.03] overflow-hidden">
+            <Card key={event.id} className="overflow-hidden group flex flex-col p-0 bg-background border border-border hover:border-primary/30 transition-colors rounded-lg">
+              <div className="aspect-16/11 relative bg-muted overflow-hidden">
                 {event.images && event.images.length > 0 ? (
-                  <img 
+                  <Image 
                     src={event.images[0].thumbPath || event.images[0].originalPath} 
                     alt={event.title}
-                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    fill
+                    unoptimized
+                    className="object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                 ) : (
-                  <div className="absolute inset-0 flex items-center justify-center text-foreground/10 group-hover:scale-110 transition-transform duration-700">
-                     <Zap className="h-24 w-24 opacity-10 text-aura-primary" />
+                  <div className="absolute inset-0 flex items-center justify-center text-muted-foreground/20">
+                     <Zap className="h-16 w-16" />
                   </div>
                 )}
-                <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <div className="absolute top-6 left-6 flex flex-col gap-2">
-                  <span className="px-4 py-1.5 rounded-full bg-background/60 backdrop-blur-xl border border-border text-[10px] font-black tracking-[0.2em] text-foreground">
+                <div className="absolute top-4 left-4 flex flex-col gap-2">
+                  <span className="px-3 py-1 rounded-full bg-background/90 border border-border text-xs font-medium text-foreground">
                     {event.category}
                   </span>
-                  <span className="px-4 py-1.5 rounded-full bg-aura-primary/80 backdrop-blur-xl border border-aura-primary/40 text-[10px] font-black tracking-[0.2em] text-white shadow-glow-aura">
-                    {(event as any).price === 0 ? "Free" : `$${(event as any).price.toFixed(2)}`}
+                  <span className="px-3 py-1 rounded-full bg-primary text-xs font-medium text-white">
+                    {Number((event as unknown as Record<string, unknown>).price ?? 0) === 0 ? "Free" : `$${Number((event as unknown as Record<string, unknown>).price ?? 0).toFixed(2)}`}
                   </span>
                 </div>
               </div>
 
-              <CardHeader className="p-10 pb-6">
-                <CardTitle className="text-3xl font-black tracking-tighter group-hover:text-aura-primary transition-colors duration-300 leading-none text-foreground">
+              <CardHeader className="p-5 pb-3">
+                <CardTitle className="text-xl font-bold tracking-tight group-hover:text-primary transition-colors leading-tight text-foreground">
                   {event.title}
                 </CardTitle>
-                <div className="flex flex-col gap-5 mt-8">
-                  <div className="flex items-center text-sm text-foreground/70 font-black uppercase tracking-tight">
-                    <div className="h-8 w-8 rounded-lg bg-aura-primary/10 flex items-center justify-center mr-4 border border-aura-primary/20">
-                      <Calendar className="h-4 w-4 text-aura-primary" />
+                <div className="flex flex-col gap-3 mt-4">
+                  <div className="flex items-center text-sm text-muted-foreground">
+                    <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center mr-3 border border-primary/20">
+                      <Calendar className="h-4 w-4 text-primary" />
                     </div>
                     {formatDate(event.startTime)}
                   </div>
-                  <div className="flex items-center text-sm text-foreground/70 font-black uppercase tracking-tight">
-                    <div className="h-8 w-8 rounded-lg bg-aura-secondary/10 flex items-center justify-center mr-4 border border-aura-secondary/20">
-                      <MapPin className="h-4 w-4 text-aura-secondary" />
+                  <div className="flex items-center text-sm text-muted-foreground">
+                    <div className="h-8 w-8 rounded-lg bg-muted flex items-center justify-center mr-3 border border-border">
+                      <MapPin className="h-4 w-4 text-muted-foreground" />
                     </div>
                     {event.location}
                   </div>
                 </div>
               </CardHeader>
 
-              <CardFooter className="p-10 pt-0 mt-auto">
-                <Button className="w-full h-14 rounded-2xl group/btn font-black uppercase tracking-widest text-[10px] shadow-glow-aura transition-all hover:scale-[1.02] cursor-pointer bg-aura-primary hover:bg-aura-primary/90" variant="default" asChild>
+              <CardFooter className="p-5 pt-0 mt-auto">
+                <Button variant="default" className="w-full h-10 rounded-lg text-sm font-medium group/btn transition-all" asChild>
                   <Link href={`/events/${event.id}`}>
-                    Secure Access <ArrowRight className="h-4 w-4 transition-transform group-hover/btn:translate-x-1" />
+                    View details <ArrowRight className="h-4 w-4 transition-transform group-hover/btn:translate-x-1 ml-1" />
                   </Link>
                 </Button>
               </CardFooter>
@@ -226,12 +223,12 @@ export default async function EventsPage({
           ))}
         </div>
       ) : (
-        <Card className="py-32 text-center bg-foreground/5 border-dashed border-border rounded-[2.5rem]">
-          <div className="h-24 w-24 rounded-3xl bg-foreground/5 flex items-center justify-center mx-auto border border-border text-foreground/10">
-            <SearchIcon className="h-12 w-12" />
+        <Card className="py-16 text-center bg-muted/30 border-dashed border-border rounded-lg">
+          <div className="h-16 w-16 rounded-xl bg-muted flex items-center justify-center mx-auto border border-border text-muted-foreground/50">
+            <SearchIcon className="h-8 w-8" />
           </div>
-          <h3 className="mt-8 text-2xl font-black tracking-tight uppercase">No events found</h3>
-          <p className="text-foreground/40 mt-2 font-medium">Try adjusting your search or filters to find what you're looking for.</p>
+          <h3 className="mt-6 text-xl font-bold tracking-tight">No events found</h3>
+          <p className="text-muted-foreground mt-2 font-medium">Try adjusting your search or filters to find what you&apos;re looking for.</p>
         </Card>
       )}
     </div>

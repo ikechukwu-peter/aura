@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Download, CheckCircle, Loader2, Sparkles } from "lucide-react";
+import { Download, Loader2, Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export function ClaimTicketModal() {
@@ -30,8 +30,8 @@ export function ClaimTicketModal() {
 
       setSuccess(true);
       router.refresh();
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Claim failed");
     } finally {
       setLoading(false);
     }
@@ -40,18 +40,16 @@ export function ClaimTicketModal() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="aura" className="h-16 px-10 rounded-2xl font-black tracking-widest text-xs uppercase">
+        <Button variant="default" className="h-16 px-10 rounded-2xl font-black tracking-widest text-xs uppercase">
           <Download className="mr-3 h-5 w-5" /> Claim ticket
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md bg-background/80 backdrop-blur-3xl border-border/60 rounded-[2.5rem] overflow-hidden shadow-2xl">
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-aura-primary via-aura-secondary to-aura-accent" />
-        
+      <DialogContent className="sm:max-w-md bg-background border-border/60 rounded-lg overflow-hidden shadow-2xl">
         <DialogHeader className="p-8 pb-2">
           <DialogTitle className="text-3xl font-black tracking-tighter text-foreground">
-            Claim <span className="bg-gradient-to-r from-aura-primary to-aura-secondary bg-clip-text text-transparent uppercase">Transfer</span>
+            Claim transferred ticket
           </DialogTitle>
-          <p className="text-[10px] font-bold text-foreground/40 uppercase tracking-[0.2em] mt-2">
+          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] mt-2">
             Enter your unique transfer code
           </p>
         </DialogHeader>
@@ -59,13 +57,13 @@ export function ClaimTicketModal() {
         {!success ? (
           <div className="p-6 space-y-6">
             <div className="space-y-3">
-              <Label htmlFor="code" className="text-[10px] font-bold uppercase tracking-widest text-foreground/40">Transfer code</Label>
+              <Label htmlFor="code" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Transfer code</Label>
               <Input
                 id="code"
                 placeholder="TRF-XXXXXXXX"
                 value={transferCode}
                 onChange={(e) => setTransferCode(e.target.value)}
-                className="h-14 bg-foreground/[0.03] border-border/60 rounded-2xl focus:ring-indigo-500/20 font-bold text-center tracking-widest text-xl uppercase"
+                className="h-14 bg-foreground/3 border-border/60 rounded-2xl focus:ring-primary/20 font-bold text-center tracking-widest text-xl uppercase"
               />
             </div>
 
@@ -79,29 +77,29 @@ export function ClaimTicketModal() {
               <Button 
                 onClick={handleClaim} 
                 disabled={loading || !transferCode} 
-                variant="aura"
+                variant="default"
                 className="w-full h-14 rounded-2xl font-black uppercase tracking-widest text-xs"
               >
-                {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <span className="uppercase">Claim experience</span>}
+                {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <span className="uppercase">Claim ticket</span>}
               </Button>
             </DialogFooter>
           </div>
         ) : (
           <div className="p-8 space-y-8 text-center animate-in fade-in zoom-in duration-500">
-            <div className="h-24 w-24 rounded-[2rem] bg-aura-primary/10 border border-aura-primary/20 flex items-center justify-center mx-auto shadow-glow-aura/20">
-              <Sparkles className="h-12 w-12 text-aura-primary animate-pulse" />
+            <div className="h-24 w-24 rounded-2xl bg-primary/10 border border-primary/30 flex items-center justify-center mx-auto">
+              <Sparkles className="h-12 w-12 text-primary" />
             </div>
             
             <div className="space-y-4">
-              <h3 className="text-2xl font-black tracking-tighter">Experience claimed!</h3>
-              <p className="text-sm font-bold text-foreground/40 leading-relaxed tracking-tight">
-                The ticket has been successfully transferred to your wallet.
+              <h3 className="text-2xl font-black tracking-tighter">Ticket claimed!</h3>
+              <p className="text-sm font-bold text-muted-foreground leading-relaxed tracking-tight">
+                The ticket has been successfully added to your wallet.
               </p>
             </div>
 
             <Button 
-              variant="aura"
-              className="w-full h-14 rounded-2xl shadow-glow-aura font-black tracking-widest text-xs uppercase"
+              variant="default"
+              className="w-full h-14 rounded-2xl font-black tracking-widest text-xs uppercase"
               onClick={() => {
                 setSuccess(false);
                 setTransferCode("");

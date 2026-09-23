@@ -1,13 +1,12 @@
 import { prisma } from "@/lib/prisma";
-import { TicketStatus, AuditLog } from "@prisma/client";
+import { TicketStatus } from "@prisma/client";
 
 export class AdminService {
   static async getDashboardStats() {
-    const [userCount, eventCount, ticketCount, totalRevenue] = await Promise.all([
+    const [userCount, eventCount, ticketCount] = await Promise.all([
       prisma.user.count(),
       prisma.event.count(),
       prisma.ticket.count({ where: { status: TicketStatus.ISSUED } }),
-      prisma.ticket.count(), // Simplification: in this app all tickets are free/fixed for now
     ]);
 
     const recentAuditLogs = await prisma.auditLog.findMany({

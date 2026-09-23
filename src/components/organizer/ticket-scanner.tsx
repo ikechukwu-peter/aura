@@ -14,8 +14,7 @@ import {
   Calendar,
   Sparkles,
   Zap,
-  Info,
-  Maximize2
+  Info
 } from "lucide-react";
 import { Html5QrcodeScanner, Html5QrcodeSupportedFormats } from "html5-qrcode";
 import { Button } from "@/components/ui/button";
@@ -31,6 +30,7 @@ export function TicketScanner({ role }: TicketScannerProps) {
   
   const [isScanning, setIsScanning] = useState(false);
   const [isValidating, setIsValidating] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [lastResult, setLastResult] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const scannerRef = useRef<Html5QrcodeScanner | null>(null);
@@ -58,6 +58,7 @@ export function TicketScanner({ role }: TicketScannerProps) {
         scannerRef.current = null;
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isScanning]);
 
   async function onScanSuccess(decodedText: string) {
@@ -90,7 +91,7 @@ export function TicketScanner({ role }: TicketScannerProps) {
         toast.error(data.error);
         setIsScanning(false);
       }
-    } catch (err) {
+    } catch {
       setError("Failed to connect to server");
       toast.error("Network error");
     } finally {
@@ -98,7 +99,8 @@ export function TicketScanner({ role }: TicketScannerProps) {
     }
   }
 
-  function onScanFailure(error: string) {}
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  function onScanFailure(_: string) {}
 
   const resetScanner = () => {
     setLastResult(null);
@@ -109,54 +111,47 @@ export function TicketScanner({ role }: TicketScannerProps) {
   return (
     <div className="w-full max-w-lg space-y-10">
       {/* Header */}
-      <div className="text-center space-y-4 relative">
-        <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-40 h-40 bg-indigo-500/10 blur-[80px] rounded-full pointer-events-none" />
-        <div className="inline-flex items-center rounded-full border border-indigo-500/20 bg-indigo-500/5 px-5 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-indigo-600 dark:text-indigo-400 backdrop-blur-sm">
-          <Zap className="h-3 w-3 mr-2 fill-indigo-500/20" />
+      <div className="text-center space-y-4">
+        <div className="inline-flex items-center rounded-full border border-primary/20 bg-primary/5 px-5 py-2 text-[10px] font-bold uppercase tracking-[0.2em] text-primary backdrop-blur-sm">
+          <Zap className="h-3 w-3 mr-2" />
           Real-time Verification
         </div>
         <h1 className="text-5xl font-black tracking-tighter text-foreground leading-none">
-          Gate <span className="text-indigo-600 relative">
-            Access
-            <div className="absolute -bottom-2 left-0 w-full h-1 bg-indigo-600/20 rounded-full" />
-          </span>
+          Ticket <span className="text-primary">Scanner</span>
         </h1>
-        <p className="text-foreground/40 text-[10px] font-black uppercase tracking-[0.3em] flex items-center justify-center gap-2">
+        <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-[0.3em] flex items-center justify-center gap-2">
           <span className="h-px w-8 bg-border/60" />
-          Secure Entry Point
+          Check-in Station
           <span className="h-px w-8 bg-border/60" />
         </p>
       </div>
 
       {/* Scanner / Result Area */}
       <div className="relative group">
-        {/* Animated Glow Border */}
-        <div className="absolute -inset-[2px] bg-gradient-to-tr from-indigo-500/20 via-cyan-500/20 to-indigo-500/20 rounded-[3rem] blur-sm group-hover:blur-md transition-all duration-500" />
-        
-        <div className="relative aspect-square w-full bg-background/40 backdrop-blur-xl rounded-[3rem] border border-white/10 shadow-2xl flex flex-col overflow-hidden">
+        <div className="relative aspect-square w-full bg-card rounded-6xl border border-border shadow-2xl flex flex-col overflow-hidden">
           
           {!isScanning && !lastResult && !error && (
             <div className="flex-1 flex flex-col items-center justify-center p-12 text-center space-y-8">
               <div className="relative">
-                <div className="absolute inset-0 bg-indigo-600/20 blur-2xl rounded-full animate-pulse" />
-                <div className="relative h-28 w-28 rounded-[2rem] bg-indigo-600/10 flex items-center justify-center border border-indigo-500/20 transform hover:scale-110 transition-transform duration-500">
-                  <Camera className="h-12 w-12 text-indigo-600" />
+                <div className="relative h-28 w-28 rounded-4xl bg-primary/10 flex items-center justify-center border border-primary/20 transform hover:scale-110 transition-transform duration-500">
+                  <Camera className="h-12 w-12 text-primary" />
                 </div>
               </div>
               <div className="space-y-3">
-                <h3 className="text-2xl font-black tracking-tight italic">Scanner offline</h3>
-                <p className="text-[10px] text-foreground/40 font-black uppercase tracking-[0.2em] leading-relaxed max-w-[200px] mx-auto">
+                <h3 className="text-2xl font-bold tracking-tight">Scanner idle</h3>
+                <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-[0.2em] leading-relaxed max-w-50 mx-auto">
                   Ready to process digital tickets
                 </p>
               </div>
               <Button 
                 onClick={() => setIsScanning(true)}
-                className="h-16 w-full max-w-[240px] rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-black tracking-[0.2em] text-xs shadow-[0_0_40px_-10px_rgba(79,70,229,0.5)] cursor-pointer group/btn overflow-hidden relative"
+                size="lg"
+                variant="default"
+                className="h-16 w-full max-w-60 rounded-2xl"
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000" />
-                <span className="relative flex items-center gap-2 uppercase">
+                <span className="flex items-center gap-2 uppercase text-xs tracking-[0.2em] font-bold">
                   <Sparkles className="h-4 w-4" />
-                  Initialize scan
+                  Start scan
                 </span>
               </Button>
             </div>
@@ -164,33 +159,31 @@ export function TicketScanner({ role }: TicketScannerProps) {
 
           {isScanning && (
             <div className="relative w-full h-full">
-              <div id="qr-reader" className="w-full h-full !border-none overflow-hidden" />
+              <div id="qr-reader" className="w-full h-full border-none! overflow-hidden" />
               {/* Scanning Overlay UI */}
-              <div className="absolute inset-0 pointer-events-none border-[40px] border-black/40">
-                <div className="absolute inset-0 border-2 border-indigo-500/30 rounded-lg">
-                  <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-indigo-500" />
-                  <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-indigo-500" />
-                  <div className="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-indigo-500" />
-                  <div className="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-indigo-500" />
+              <div className="absolute inset-0 pointer-events-none border-40 border-black/40">
+                <div className="absolute inset-0 border-2 border-primary/30 rounded-lg">
+                  <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-primary" />
+                  <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-primary" />
+                  <div className="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-primary" />
+                  <div className="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-primary" />
                 </div>
-                <div className="absolute top-1/2 left-0 w-full h-px bg-indigo-500/50 shadow-[0_0_15px_rgba(99,102,241,0.5)] animate-scan-line" />
+                <div className="absolute top-1/2 left-0 w-full h-px bg-primary/50 animate-scan-line" />
               </div>
               <div className="absolute bottom-6 left-1/2 -translate-x-1/2 px-4 py-2 bg-black/60 backdrop-blur-md rounded-full border border-white/10 flex items-center gap-2">
-                <div className="h-2 w-2 rounded-full bg-red-500 animate-pulse" />
-                <span className="text-[8px] font-black uppercase tracking-widest text-white">System Active</span>
+                <span className="text-[8px] font-bold uppercase tracking-widest text-white">Scanning…</span>
               </div>
             </div>
           )}
 
           {isValidating && (
-            <div className="absolute inset-0 bg-indigo-950/40 backdrop-blur-xl flex flex-col items-center justify-center gap-6 z-50 animate-in fade-in duration-300">
+            <div className="absolute inset-0 bg-background/80 backdrop-blur-xl flex flex-col items-center justify-center gap-6 z-50 animate-in fade-in duration-300">
               <div className="relative">
-                <div className="absolute inset-0 bg-indigo-600/30 blur-3xl animate-pulse" />
-                <Loader2 className="h-16 w-16 text-indigo-400 animate-spin relative" />
+                <Loader2 className="h-16 w-16 text-primary animate-spin relative" />
               </div>
               <div className="space-y-1 text-center">
-                <span className="text-[11px] font-black uppercase tracking-[0.3em] text-indigo-400 block">Decrypting Ledger</span>
-                <span className="text-[8px] font-black uppercase tracking-[0.2em] text-indigo-400/40">Securing Transaction...</span>
+                <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-primary block">Verifying Ticket</span>
+                <span className="text-[8px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Checking in…</span>
               </div>
             </div>
           )}
@@ -199,7 +192,6 @@ export function TicketScanner({ role }: TicketScannerProps) {
           {lastResult && !error && (
             <div className="flex-1 flex flex-col items-center justify-center p-10 text-center space-y-8 animate-in slide-in-from-bottom-4 duration-500">
               <div className="relative">
-                <div className="absolute inset-0 bg-green-500/20 blur-[60px] rounded-full" />
                 <div className="h-24 w-24 rounded-full bg-green-500/10 flex items-center justify-center border border-green-500/20 relative group-hover:scale-110 transition-transform">
                   <CheckCircle2 className="h-12 w-12 text-green-500" />
                 </div>
@@ -207,31 +199,31 @@ export function TicketScanner({ role }: TicketScannerProps) {
               
               <div className="space-y-6 w-full">
                 <div className="space-y-1">
-                  <h3 className="text-3xl font-black tracking-tighter text-green-500 italic">Clear for entry</h3>
+                  <h3 className="text-3xl font-bold tracking-tighter text-green-500">Checked in</h3>
                   <div className="inline-flex items-center gap-2 px-3 py-1 bg-green-500/5 border border-green-500/10 rounded-lg">
-                    <span className="text-[9px] font-black uppercase tracking-widest text-green-500/60 font-mono">
+                    <span className="text-[9px] font-bold uppercase tracking-widest text-green-500/70 font-mono">
                       {lastResult.code}
                     </span>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 gap-3 text-left">
-                  <div className="group/item p-5 rounded-[2rem] bg-white/[0.03] border border-white/10 flex items-center gap-4 hover:bg-white/[0.05] transition-colors">
-                    <div className="h-12 w-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center border border-indigo-500/20 group-hover/item:scale-110 transition-transform">
-                      <User className="h-5 w-5 text-indigo-500" />
+                  <div className="group/item p-5 rounded-4xl bg-card border border-border flex items-center gap-4 hover:bg-muted/30 transition-colors">
+                    <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20 group-hover/item:scale-110 transition-transform">
+                      <User className="h-5 w-5 text-primary" />
                     </div>
                     <div className="flex flex-col">
-                      <span className="text-[9px] font-black uppercase tracking-widest text-foreground/30">Holder identity</span>
-                      <span className="text-sm font-black tracking-tight">{lastResult.userName}</span>
+                      <span className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground/70">Attendee</span>
+                      <span className="text-sm font-bold tracking-tight">{lastResult.userName}</span>
                     </div>
                   </div>
-                  <div className="group/item p-5 rounded-[2rem] bg-white/[0.03] border border-white/10 flex items-center gap-4 hover:bg-white/[0.05] transition-colors">
-                    <div className="h-12 w-12 rounded-2xl bg-cyan-500/10 flex items-center justify-center border border-cyan-500/20 group-hover/item:scale-110 transition-transform">
-                      <Calendar className="h-5 w-5 text-cyan-500" />
+                  <div className="group/item p-5 rounded-4xl bg-card border border-border flex items-center gap-4 hover:bg-muted/30 transition-colors">
+                    <div className="h-12 w-12 rounded-2xl bg-[#0F766E]/10 flex items-center justify-center border border-[#0F766E]/20 group-hover/item:scale-110 transition-transform">
+                      <Calendar className="h-5 w-5 text-[#0F766E]" />
                     </div>
                     <div className="flex flex-col">
-                      <span className="text-[9px] font-black uppercase tracking-widest text-foreground/30">Target destination</span>
-                      <span className="text-sm font-black tracking-tight line-clamp-1">{lastResult.eventTitle}</span>
+                      <span className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground/70">Event</span>
+                      <span className="text-sm font-bold tracking-tight line-clamp-1">{lastResult.eventTitle}</span>
                     </div>
                   </div>
                 </div>
@@ -239,9 +231,11 @@ export function TicketScanner({ role }: TicketScannerProps) {
 
               <Button 
                 onClick={resetScanner}
-                className="h-14 w-full rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-black tracking-[0.2em] text-[10px] shadow-glow-indigo mt-4"
+                size="lg"
+                variant="default"
+                className="h-14 w-full rounded-2xl mt-4"
               >
-                <span className="uppercase">Scan next passenger</span>
+                <span className="uppercase text-[10px] tracking-[0.2em] font-bold">Scan next attendee</span>
               </Button>
             </div>
           )}
@@ -250,7 +244,6 @@ export function TicketScanner({ role }: TicketScannerProps) {
           {error && (
             <div className="flex-1 flex flex-col items-center justify-center p-10 text-center space-y-8 animate-in slide-in-from-bottom-4 duration-500">
               <div className="relative">
-                <div className="absolute inset-0 bg-red-500/20 blur-[60px] rounded-full" />
                 <div className="h-24 w-24 rounded-full bg-red-500/10 flex items-center justify-center border border-red-500/20 relative">
                   <XCircle className="h-12 w-12 text-red-500" />
                 </div>
@@ -258,29 +251,29 @@ export function TicketScanner({ role }: TicketScannerProps) {
               
               <div className="space-y-6 w-full">
                 <div className="space-y-2">
-                  <h3 className="text-3xl font-black tracking-tighter text-red-500 italic">Access denied</h3>
-                  <p className="px-4 py-2 bg-red-500/5 border border-red-500/10 rounded-xl text-[10px] font-black uppercase tracking-[0.15em] text-red-500/80 mx-auto max-w-[240px]">
+                  <h3 className="text-3xl font-bold tracking-tighter text-red-500">Access denied</h3>
+                  <p className="px-4 py-2 bg-red-500/5 border border-red-500/10 rounded-xl text-[10px] font-bold uppercase tracking-[0.15em] text-red-500/80 mx-auto max-w-60">
                     {error}
                   </p>
                 </div>
 
                 {lastResult && (
-                  <div className="p-6 rounded-[2rem] bg-red-500/5 border border-red-500/10 text-left space-y-4">
+                  <div className="p-6 rounded-4xl bg-red-500/5 border border-red-500/10 text-left space-y-4">
                     <div className="flex justify-between items-center">
-                      <span className="text-[10px] font-black uppercase tracking-widest text-red-500/40 italic">Audit record</span>
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-red-500/50">Previous check-in</span>
                       <ShieldAlert className="h-4 w-4 text-red-500" />
                     </div>
                     <div className="space-y-2">
                       <div className="flex items-center gap-2">
                         <div className="h-1.5 w-1.5 rounded-full bg-red-500" />
-                        <p className="text-[10px] font-black uppercase text-foreground/60">
+                        <p className="text-[10px] font-bold uppercase text-muted-foreground">
                           Checked: {new Date(lastResult.usedAt).toLocaleTimeString()}
                         </p>
                       </div>
                       <div className="flex items-center gap-2">
                         <div className="h-1.5 w-1.5 rounded-full bg-red-500" />
-                        <p className="text-[10px] font-black uppercase text-foreground/60">
-                          Holder: {lastResult.userName}
+                        <p className="text-[10px] font-bold uppercase text-muted-foreground">
+                          Attendee: {lastResult.userName}
                         </p>
                       </div>
                     </div>
@@ -290,9 +283,11 @@ export function TicketScanner({ role }: TicketScannerProps) {
 
               <Button 
                 onClick={resetScanner}
-                className="h-14 w-full rounded-2xl bg-red-600 hover:bg-red-500 text-white font-black uppercase tracking-[0.2em] text-[10px]"
+                size="lg"
+                variant="destructive"
+                className="h-14 w-full rounded-2xl"
               >
-                Reset system
+                <span className="uppercase text-[10px] tracking-[0.2em] font-bold">Try again</span>
               </Button>
             </div>
           )}
@@ -301,24 +296,24 @@ export function TicketScanner({ role }: TicketScannerProps) {
 
       {/* Stats/Info Grid */}
       <div className="grid grid-cols-2 gap-4">
-        <div className="group p-6 rounded-[2.5rem] bg-foreground/[0.02] border border-border/40 space-y-3 hover:bg-foreground/[0.04] transition-all">
-          <div className="h-10 w-10 rounded-2xl bg-indigo-500/10 flex items-center justify-center border border-indigo-500/20 group-hover:scale-110 transition-transform">
-            <RefreshCw className="h-5 w-5 text-indigo-500" />
+        <div className="group p-6 rounded-[2.5rem] bg-card border border-border space-y-3 hover:bg-muted/20 transition-all">
+          <div className="h-10 w-10 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20 group-hover:scale-110 transition-transform">
+            <RefreshCw className="h-5 w-5 text-primary" />
           </div>
           <div className="space-y-1">
-            <h4 className="text-[10px] font-black uppercase tracking-[0.2em]">End-to-End</h4>
-            <p className="text-[9px] text-foreground/40 font-bold uppercase leading-relaxed tracking-wider">
-              Cryptographically verified tickets.
+            <h4 className="text-[10px] font-bold uppercase tracking-[0.2em]">Signed tickets</h4>
+            <p className="text-[9px] text-muted-foreground font-semibold uppercase leading-relaxed tracking-wider">
+              Server-signed JWT tickets.
             </p>
           </div>
         </div>
-        <div className="group p-6 rounded-[2.5rem] bg-foreground/[0.02] border border-border/40 space-y-3 hover:bg-foreground/[0.04] transition-all">
+        <div className="group p-6 rounded-[2.5rem] bg-card border border-border space-y-3 hover:bg-muted/20 transition-all">
           <div className="h-10 w-10 rounded-2xl bg-green-500/10 flex items-center justify-center border border-green-500/20 group-hover:scale-110 transition-transform">
             <ShieldCheck className="h-5 w-5 text-green-500" />
           </div>
           <div className="space-y-1">
-            <h4 className="text-[10px] font-black uppercase tracking-[0.2em]">Immutability</h4>
-            <p className="text-[9px] text-foreground/40 font-bold uppercase leading-relaxed tracking-wider">
+            <h4 className="text-[10px] font-bold uppercase tracking-[0.2em]">One entry only</h4>
+            <p className="text-[9px] text-muted-foreground font-semibold uppercase leading-relaxed tracking-wider">
               Single-use entry validation.
             </p>
           </div>
@@ -326,17 +321,17 @@ export function TicketScanner({ role }: TicketScannerProps) {
       </div>
 
       {/* Footer System Info */}
-      <div className="flex items-center justify-between px-6 py-4 rounded-2xl bg-foreground/[0.01] border border-border/20">
+      <div className="flex items-center justify-between px-6 py-4 rounded-2xl bg-card border border-border">
         <div className="flex items-center gap-3">
-          <Info className="h-4 w-4 text-foreground/20" />
-          <span className="text-[8px] font-black uppercase tracking-[0.3em] text-foreground/20">
-            Node: {role}_GATE_01
+          <Info className="h-4 w-4 text-muted-foreground" />
+          <span className="text-[8px] font-bold uppercase tracking-[0.3em] text-muted-foreground">
+            Scanner role: {role}
           </span>
         </div>
         <div className="flex items-center gap-2">
           <div className="h-1 w-1 rounded-full bg-green-500" />
-          <span className="text-[8px] font-black uppercase tracking-[0.3em] text-foreground/20 italic">
-            Secure Connection
+          <span className="text-[8px] font-bold uppercase tracking-[0.3em] text-muted-foreground">
+            Connected
           </span>
         </div>
       </div>

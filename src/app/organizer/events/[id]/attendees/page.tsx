@@ -54,16 +54,16 @@ export default async function EventAttendeesPage({
       <div className="flex flex-col space-y-4">
         <Link
           href={`/organizer/events/${id}`}
-          className="inline-flex items-center text-xs font-black uppercase tracking-widest text-foreground/40 hover:text-foreground transition-all group"
+          className="inline-flex items-center text-xs font-black uppercase tracking-widest text-muted-foreground hover:text-foreground transition-all group"
         >
           <ArrowLeft className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1" />
           Back to Event
         </Link>
         <div className="space-y-1">
           <h1 className="text-5xl font-black tracking-tighter uppercase text-foreground leading-none">
-            Attendee <span className="text-indigo-600">Manifest</span>
+            Attendees
           </h1>
-          <p className="text-foreground/40 text-[10px] font-black uppercase tracking-[0.3em]">
+          <p className="text-muted-foreground text-[10px] font-black uppercase tracking-[0.3em]">
             {event.title} // {event.tickets.length} Registered
           </p>
         </div>
@@ -76,16 +76,16 @@ export default async function EventAttendeesPage({
               <Users className="h-12 w-12 text-foreground/10" />
               <div className="space-y-1">
                 <p className="text-sm font-black uppercase tracking-tight">No attendees yet</p>
-                <p className="text-[10px] text-foreground/40 font-black uppercase tracking-widest">Tickets are waiting to be claimed</p>
+                <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest">Tickets are waiting to be claimed</p>
               </div>
             </CardContent>
           </Card>
         ) : (
           event.tickets.map((ticket) => (
-            <Card key={ticket.id} className="rounded-3xl border-border/60 bg-foreground/[0.02] hover:bg-foreground/[0.04] transition-all overflow-hidden group">
+            <Card key={ticket.id} className="rounded-3xl border-border/60 bg-foreground/2 hover:bg-foreground/4 transition-all overflow-hidden group">
               <CardContent className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div className="flex items-center gap-6">
-                  <div className="h-16 w-16 rounded-2xl bg-indigo-500/10 flex items-center justify-center border border-indigo-500/20 text-indigo-600 shrink-0 group-hover:scale-105 transition-transform">
+                  <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20 text-primary shrink-0 group-hover:scale-105 transition-transform">
                     <Users className="h-8 w-8" />
                   </div>
                   <div className="space-y-1">
@@ -93,7 +93,7 @@ export default async function EventAttendeesPage({
                       {ticket.user?.name || "Anonymous User"}
                     </h3>
                     <div className="flex items-center gap-3">
-                      <div className="flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-foreground/40">
+                      <div className="flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
                         <Mail className="h-3 w-3" />
                         {ticket.user?.email || "No Email"}
                       </div>
@@ -103,15 +103,15 @@ export default async function EventAttendeesPage({
 
                 <div className="flex flex-wrap items-center gap-4 md:gap-8">
                   <div className="space-y-1">
-                    <p className="text-[9px] font-black uppercase tracking-[0.2em] text-foreground/20">Ticket ID</p>
+                    <p className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground/70">Ticket ID</p>
                     <div className="flex items-center gap-2">
-                      <Ticket className="h-3 w-3 text-indigo-500/40" />
-                      <span className="font-mono text-xs font-bold text-indigo-600/60 uppercase">{ticket.code}</span>
+                      <Ticket className="h-3 w-3 text-primary/40" />
+                      <span className="font-mono text-xs font-bold text-primary/60 uppercase">{ticket.code}</span>
                     </div>
                   </div>
 
                   <div className="space-y-1">
-                    <p className="text-[9px] font-black uppercase tracking-[0.2em] text-foreground/20">Status</p>
+                    <p className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground/70">Status</p>
                     <div className="flex items-center gap-2">
                       {ticket.status === "USED" ? (
                         <div className="flex items-center gap-1.5 px-3 py-1 bg-green-500/10 border border-green-500/20 rounded-full">
@@ -127,8 +127,8 @@ export default async function EventAttendeesPage({
                     </div>
                   </div>
 
-                  <div className="space-y-1 min-w-[120px]">
-                    <p className="text-[9px] font-black uppercase tracking-[0.2em] text-foreground/20">Acquired</p>
+                  <div className="space-y-1 min-w-30">
+                    <p className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground/70">Acquired</p>
                     <p className="text-[10px] font-black uppercase tracking-tight text-foreground/60">{formatDate(ticket.issuedAt)}</p>
                   </div>
                 </div>

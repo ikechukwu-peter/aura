@@ -2,9 +2,10 @@
 
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function OrganizerAnalytics({ data }: { data: any[] }) {
   return (
-    <div className="h-[300px] w-full">
+    <div className="h-75 w-full">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={data}>
           <CartesianGrid strokeDasharray="3 3" vertical={false} opacity={0.1} />
@@ -32,10 +33,10 @@ export function OrganizerAnalytics({ data }: { data: any[] }) {
             }}
           />
           <Bar dataKey="sold" radius={[8, 8, 0, 0]}>
-            {data.map((entry, index) => (
+            {data.map((_entry, index) => (
               <Cell 
                 key={`cell-${index}`} 
-                fill={index % 2 === 0 ? "var(--aura-primary)" : "var(--aura-secondary)"} 
+                fill={index % 2 === 0 ? "#D97706" : "#0F766E"} 
                 fillOpacity={0.8}
               />
             ))}

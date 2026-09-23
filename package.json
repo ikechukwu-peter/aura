@@ -43,6 +43,7 @@
   },
   "devDependencies": {
     "@next/eslint-plugin-next": "^16.1.6",
+    "@tt-a1i/archify-dsh": "^0.1.0",
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20.17.17",
     "@types/nprogress": "^0.2.3",

@@ -27,7 +27,7 @@ export async function verifyTicketToken(token: string) {
       eventId: string;
       userId: string;
     };
-  } catch (error) {
+  } catch {
     return null;
   }
 }

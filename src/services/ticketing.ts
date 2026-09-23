@@ -42,7 +42,7 @@ export class TicketingService {
           },
           data: { ticketsIssuedCount: { increment: quantity } },
         });
-      } catch (error) {
+      } catch {
         throw new Error("Not enough tickets available or event closed");
       }
 

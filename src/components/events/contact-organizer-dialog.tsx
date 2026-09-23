@@ -52,34 +52,35 @@ export function ContactOrganizerDialog({ organizerId, organizerName, eventId, ev
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="glass" className="w-full h-12 rounded-xl font-black uppercase tracking-widest text-[10px] gap-2">
+        <Button variant="outline" className="w-full h-10 rounded-lg font-medium text-sm gap-2">
           <MessageSquare className="h-4 w-4" />
-          Contact Organizer
+          Contact organizer
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md bg-background/80 backdrop-blur-3xl border-border/60 rounded-[2rem]">
+      <DialogContent className="sm:max-w-md bg-background border-border rounded-lg">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-black uppercase tracking-tighter">Contact <span className="text-aura-primary">{organizerName}</span></DialogTitle>
-          <DialogDescription className="text-[10px] font-black uppercase tracking-widest text-foreground/40">
+          <DialogTitle className="text-xl font-bold tracking-tight">Contact <span className="text-primary">{organizerName}</span></DialogTitle>
+          <DialogDescription className="text-xs font-medium text-muted-foreground">
             Regarding: {eventTitle}
           </DialogDescription>
         </DialogHeader>
-        <div className="py-6">
+        <div className="py-4">
           <Textarea
             placeholder="Type your message here..."
             value={message}
             onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setMessage(e.target.value)}
-            className="min-h-[150px] bg-background/50 border-border/60 rounded-2xl focus:border-aura-primary/50 transition-all font-medium"
+            className="min-h-37.5 bg-background border-border rounded-lg focus:border-primary/50 transition-colors text-sm"
           />
         </div>
         <DialogFooter>
           <Button 
             onClick={handleSendMessage} 
             disabled={sending || !message.trim()}
-            className="w-full h-14 rounded-2xl font-black uppercase tracking-widest text-xs shadow-glow-aura gap-2"
+            variant="default"
+            className="w-full h-10 rounded-lg font-medium text-sm gap-2"
           >
             {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-            Send Neural Message
+            Send message
           </Button>
         </DialogFooter>
       </DialogContent>

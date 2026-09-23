@@ -93,8 +93,8 @@ export function UserManagementTable({ initialUsers, currentUserRole }: UserManag
       toast.success("User created successfully");
       setIsCreateModalOpen(false);
       setNewUser({ name: "", email: "", password: "", role: "USER" });
-    } catch (error: any) {
-      toast.error(error.message);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Failed to create user");
     } finally {
       setIsSubmitting(false);
     }
@@ -125,12 +125,13 @@ export function UserManagementTable({ initialUsers, currentUserRole }: UserManag
 
       setUsers(users.map(u => u.id === userId ? { ...u, role: newRole } : u));
       toast.success("User role updated successfully");
-    } catch (error: any) {
+    } catch (error) {
       console.error(error);
-      toast.error(error.message || "Failed to update user role");
+      toast.error(error instanceof Error ? error.message : "Failed to update user role");
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const roleOptions = useMemo(() => {
     const roles = [
       { value: "USER", label: "Attendee" },
@@ -165,9 +166,9 @@ export function UserManagementTable({ initialUsers, currentUserRole }: UserManag
 
           setUsers(users.map(u => u.id === userId ? { ...u, isBlocked: !currentBlockedStatus } : u));
           toast.success(currentBlockedStatus ? "User unblocked" : "User blocked");
-        } catch (error: any) {
+        } catch (error) {
           console.error(error);
-          toast.error(error.message || "Failed to update user status");
+          toast.error(error instanceof Error ? error.message : "Failed to update user status");
         }
       }
     });
@@ -193,9 +194,9 @@ export function UserManagementTable({ initialUsers, currentUserRole }: UserManag
 
           setUsers(users.filter(u => u.id !== userId));
           toast.success("User deleted from the registry");
-        } catch (error: any) {
+        } catch (error) {
           console.error(error);
-          toast.error(error.message || "Failed to delete user");
+          toast.error(error instanceof Error ? error.message : "Failed to delete user");
         }
       }
     });
@@ -205,12 +206,12 @@ export function UserManagementTable({ initialUsers, currentUserRole }: UserManag
   return (
     <div className="space-y-6">
       <AlertDialog open={isConfirmOpen} onOpenChange={setIsConfirmOpen}>
-        <AlertDialogContent className="bg-background/80 backdrop-blur-3xl border-border/60 rounded-[2rem]">
+        <AlertDialogContent className="bg-background/80 backdrop-blur-3xl border-border/60 rounded-4xl">
           <AlertDialogHeader>
             <AlertDialogTitle className="text-2xl font-black uppercase tracking-tight">
               {confirmConfig?.title}
             </AlertDialogTitle>
-            <AlertDialogDescription className="text-foreground/40 font-medium">
+            <AlertDialogDescription className="text-muted-foreground font-medium">
               {confirmConfig?.description}
             </AlertDialogDescription>
           </AlertDialogHeader>
@@ -220,8 +221,8 @@ export function UserManagementTable({ initialUsers, currentUserRole }: UserManag
               onClick={confirmConfig?.onConfirm}
               className={`h-12 rounded-xl font-black uppercase tracking-widest text-[10px] ${
                 confirmConfig?.variant === "destructive" 
-                  ? "bg-red-500 hover:bg-red-600 text-white" 
-                  : "bg-aura-primary hover:bg-aura-primary/90 text-white"
+                  ? "bg-destructive hover:bg-destructive/90 text-destructive-foreground" 
+                  : "bg-primary hover:bg-primary/90 text-primary-foreground"
               }`}
             >
               {confirmConfig?.actionLabel}
@@ -231,78 +232,78 @@ export function UserManagementTable({ initialUsers, currentUserRole }: UserManag
       </AlertDialog>
       <div className="flex flex-col md:flex-row gap-4 items-center justify-between mb-8">
         <div className="relative w-full md:max-w-md">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground/20" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/70" />
           <Input 
-            placeholder="Search identities by name or email..." 
+            placeholder="Search users by name or email..." 
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-12 h-14 rounded-2xl bg-foreground/[0.02] border-border/60 focus:border-aura-primary/50 transition-all font-medium"
+            className="pl-12 h-14 rounded-2xl bg-foreground/2 border-border/60 focus:border-primary/50 transition-all font-medium"
           />
         </div>
         <div className="flex items-center gap-4 w-full md:w-auto">
           {currentUserRole === "SUPER_ADMIN" && (
             <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
               <DialogTrigger asChild>
-                <Button className="h-14 rounded-2xl bg-aura-primary hover:bg-aura-primary/90 text-white px-6 font-black uppercase tracking-widest gap-2">
+                <Button variant="default" className="h-14 rounded-2xl px-6 font-black uppercase tracking-widest gap-2">
                   <UserPlus className="h-5 w-5" />
-                  New Citizen
+                  New User
                 </Button>
               </DialogTrigger>
-              <DialogContent className="bg-background/80 backdrop-blur-3xl border-border/60 rounded-[2rem] max-w-md">
+              <DialogContent className="bg-background/80 backdrop-blur-3xl border-border/60 rounded-4xl max-w-md">
                 <DialogHeader>
-                  <DialogTitle className="text-2xl font-black uppercase tracking-tight">Induct New Citizen</DialogTitle>
-                  <DialogDescription className="text-foreground/40 font-medium">
-                    Add a new identity to the population registry.
+                  <DialogTitle className="text-2xl font-black uppercase tracking-tight">Create New User</DialogTitle>
+                  <DialogDescription className="text-muted-foreground font-medium">
+                    Add a new user to the system.
                   </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleCreateUser} className="space-y-4 py-4">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-foreground/40 ml-1">Full Identity Name</label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Full Name</label>
                     <Input 
                       placeholder="e.g. John Doe" 
                       value={newUser.name}
                       onChange={(e) => setNewUser({...newUser, name: e.target.value})}
-                      className="h-12 rounded-xl bg-foreground/[0.02] border-border/60 focus:border-aura-primary/50 transition-all font-medium"
+                      className="h-12 rounded-xl bg-foreground/2 border-border/60 focus:border-primary/50 transition-all font-medium"
                       required
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-foreground/40 ml-1">Email Address</label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Email Address</label>
                     <Input 
                       type="email"
                       placeholder="email@example.com" 
                       value={newUser.email}
                       onChange={(e) => setNewUser({...newUser, email: e.target.value})}
-                      className="h-12 rounded-xl bg-foreground/[0.02] border-border/60 focus:border-aura-primary/50 transition-all font-medium"
+                      className="h-12 rounded-xl bg-foreground/2 border-border/60 focus:border-primary/50 transition-all font-medium"
                       required
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-foreground/40 ml-1">Access Credentials</label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Password</label>
                     <Input 
                       type="password"
                       placeholder="Minimum 8 characters" 
                       value={newUser.password}
                       onChange={(e) => setNewUser({...newUser, password: e.target.value})}
-                      className="h-12 rounded-xl bg-foreground/[0.02] border-border/60 focus:border-aura-primary/50 transition-all font-medium"
+                      className="h-12 rounded-xl bg-foreground/2 border-border/60 focus:border-primary/50 transition-all font-medium"
                       required
                       minLength={8}
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-foreground/40 ml-1">Classification Role</label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Role</label>
                     <Select 
                       value={newUser.role} 
                       onValueChange={(value) => setNewUser({...newUser, role: value})}
                     >
-                      <SelectTrigger className="h-12 rounded-xl bg-foreground/[0.02] border-border/60 text-[10px] font-black uppercase tracking-widest">
+                      <SelectTrigger className="h-12 rounded-xl bg-foreground/2 border-border/60 text-[10px] font-black uppercase tracking-widest">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent className="bg-background/80 backdrop-blur-3xl border-border/60 rounded-xl">
-                        <SelectItem value="USER" className="text-[10px] font-black uppercase tracking-widest">Citizen (USER)</SelectItem>
-                        <SelectItem value="ORGANIZER" className="text-[10px] font-black uppercase tracking-widest">Provider (ORG)</SelectItem>
+                        <SelectItem value="USER" className="text-[10px] font-black uppercase tracking-widest">Attendee (USER)</SelectItem>
+                        <SelectItem value="ORGANIZER" className="text-[10px] font-black uppercase tracking-widest">Organizer (ORG)</SelectItem>
                         {currentUserRole === "SUPER_ADMIN" && (
-                          <SelectItem value="ADMIN" className="text-[10px] font-black uppercase tracking-widest">Overseer (ADM)</SelectItem>
+                          <SelectItem value="ADMIN" className="text-[10px] font-black uppercase tracking-widest">Admin (ADM)</SelectItem>
                         )}
                       </SelectContent>
                     </Select>
@@ -311,9 +312,10 @@ export function UserManagementTable({ initialUsers, currentUserRole }: UserManag
                     <Button 
                       type="submit" 
                       disabled={isSubmitting}
-                      className="w-full h-12 rounded-xl bg-aura-primary hover:bg-aura-primary/90 text-white font-black uppercase tracking-widest"
+                      variant="default"
+                      className="w-full h-12 rounded-xl font-black uppercase tracking-widest"
                     >
-                      {isSubmitting ? "Processing..." : "Confirm Induction"}
+                      {isSubmitting ? "Processing..." : "Create User"}
                     </Button>
                   </DialogFooter>
                 </form>
@@ -321,36 +323,36 @@ export function UserManagementTable({ initialUsers, currentUserRole }: UserManag
             </Dialog>
           )}
           <Select value={roleFilter} onValueChange={setRoleFilter}>
-            <SelectTrigger className="w-full md:w-[180px] h-14 rounded-2xl bg-foreground/[0.02] border-border/60 text-[10px] font-black uppercase tracking-widest">
-              <SelectValue placeholder="All Classifications" />
+            <SelectTrigger className="w-full md:w-45 h-14 rounded-2xl bg-foreground/2 border-border/60 text-[10px] font-black uppercase tracking-widest">
+              <SelectValue placeholder="All Roles" />
             </SelectTrigger>
             <SelectContent className="bg-background/80 backdrop-blur-3xl border-border/60 rounded-2xl">
-              <SelectItem value="ALL" className="text-[10px] font-black uppercase tracking-widest">All Citizens</SelectItem>
-              <SelectItem value="USER" className="text-[10px] font-black uppercase tracking-widest">Citizens (USER)</SelectItem>
-              <SelectItem value="ORGANIZER" className="text-[10px] font-black uppercase tracking-widest">Providers (ORG)</SelectItem>
-              <SelectItem value="ADMIN" className="text-[10px] font-black uppercase tracking-widest">Overseers (ADM)</SelectItem>
+              <SelectItem value="ALL" className="text-[10px] font-black uppercase tracking-widest">All Users</SelectItem>
+              <SelectItem value="USER" className="text-[10px] font-black uppercase tracking-widest">Attendees (USER)</SelectItem>
+              <SelectItem value="ORGANIZER" className="text-[10px] font-black uppercase tracking-widest">Organizers (ORG)</SelectItem>
+              <SelectItem value="ADMIN" className="text-[10px] font-black uppercase tracking-widest">Admins (ADM)</SelectItem>
               {currentUserRole === "SUPER_ADMIN" && (
-                <SelectItem value="SUPER_ADMIN" className="text-[10px] font-black uppercase tracking-widest">High Council (SUP)</SelectItem>
+                <SelectItem value="SUPER_ADMIN" className="text-[10px] font-black uppercase tracking-widest">Super Admins (SUP)</SelectItem>
               )}
             </SelectContent>
           </Select>
         </div>
       </div>
 
-      <div className="rounded-[2rem] overflow-hidden border border-border/40 bg-foreground/[0.01]">
+      <div className="rounded-4xl overflow-hidden border border-border/40 bg-foreground/1">
         <Table>
-          <TableHeader className="bg-foreground/[0.02]">
+          <TableHeader className="bg-foreground/2">
             <TableRow className="border-border/40 hover:bg-transparent">
-              <TableHead className="text-[10px] font-black uppercase tracking-widest p-6">Identity</TableHead>
-              <TableHead className="text-[10px] font-black uppercase tracking-widest p-6">Classification</TableHead>
-              <TableHead className="text-[10px] font-black uppercase tracking-widest p-6">Onboarded</TableHead>
-              <TableHead className="text-[10px] font-black uppercase tracking-widest p-6 text-right">Protocol</TableHead>
+              <TableHead className="text-[10px] font-black uppercase tracking-widest p-6">User</TableHead>
+              <TableHead className="text-[10px] font-black uppercase tracking-widest p-6">Role</TableHead>
+              <TableHead className="text-[10px] font-black uppercase tracking-widest p-6">Created</TableHead>
+              <TableHead className="text-[10px] font-black uppercase tracking-widest p-6 text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredUsers.length > 0 ? (
               filteredUsers.map((user) => (
-                <TableRow key={user.id} className={`border-border/40 hover:bg-foreground/[0.01] transition-colors group ${user.isBlocked ? 'opacity-50 grayscale' : ''}`}>
+                <TableRow key={user.id} className={`border-border/40 hover:bg-foreground/1 transition-colors group ${user.isBlocked ? 'opacity-50 grayscale' : ''}`}>
                   <TableCell className="p-6">
                     <div className="flex flex-col">
                       <div className="flex items-center gap-2">
@@ -359,7 +361,7 @@ export function UserManagementTable({ initialUsers, currentUserRole }: UserManag
                           <StatusBadge variant="error">BLOCKED</StatusBadge>
                         )}
                       </div>
-                      <span className="text-[10px] text-foreground/40 font-medium">{user.email}</span>
+                      <span className="text-[10px] text-muted-foreground font-medium">{user.email}</span>
                     </div>
                   </TableCell>
                   <TableCell className="p-6">
@@ -386,14 +388,14 @@ export function UserManagementTable({ initialUsers, currentUserRole }: UserManag
                             defaultValue={user.role}
                             onValueChange={(value) => handleRoleChange(user.id, value)}
                           >
-                            <SelectTrigger className="w-[140px] h-10 rounded-xl bg-background border-border/60 text-[10px] font-black uppercase tracking-widest">
+                            <SelectTrigger className="w-35 h-10 rounded-xl bg-background border-border/60 text-[10px] font-black uppercase tracking-widest">
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent className="bg-background/80 backdrop-blur-3xl border-border/60 rounded-xl">
-                              <SelectItem value="USER" className="text-[10px] font-black uppercase tracking-widest">Citizen (USER)</SelectItem>
-                              <SelectItem value="ORGANIZER" className="text-[10px] font-black uppercase tracking-widest">Provider (ORG)</SelectItem>
+                              <SelectItem value="USER" className="text-[10px] font-black uppercase tracking-widest">Attendee (USER)</SelectItem>
+                              <SelectItem value="ORGANIZER" className="text-[10px] font-black uppercase tracking-widest">Organizer (ORG)</SelectItem>
                               {currentUserRole === "SUPER_ADMIN" && (
-                                <SelectItem value="ADMIN" className="text-[10px] font-black uppercase tracking-widest">Overseer (ADM)</SelectItem>
+                                <SelectItem value="ADMIN" className="text-[10px] font-black uppercase tracking-widest">Admin (ADM)</SelectItem>
                               )}
                             </SelectContent>
                           </Select>
@@ -411,7 +413,7 @@ export function UserManagementTable({ initialUsers, currentUserRole }: UserManag
                           <Button 
                             variant="ghost" 
                             size="icon" 
-                            className="h-10 w-10 rounded-xl text-foreground/20 hover:text-red-500 hover:bg-red-500/10 transition-all"
+                            className="h-10 w-10 rounded-xl text-muted-foreground/70 hover:text-red-500 hover:bg-red-500/10 transition-all"
                             onClick={() => handleDeleteUser(user.id)}
                             title="Delete User"
                           >
@@ -428,7 +430,7 @@ export function UserManagementTable({ initialUsers, currentUserRole }: UserManag
                 <TableCell colSpan={4} className="p-20 text-center">
                   <div className="flex flex-col items-center gap-4">
                     <ShieldAlert className="h-12 w-12 text-foreground/10" />
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/20">No matching identities found in registry</p>
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/70">No matching users found</p>
                   </div>
                 </TableCell>
               </TableRow>

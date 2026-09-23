@@ -30,33 +30,31 @@ export default async function AuditLogsPage() {
     take: 100,
   });
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const logs = logsData as any[];
 
   return (
     <div className="container py-16 space-y-12">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
         <div className="space-y-4">
-          <div className="inline-flex items-center rounded-full border border-aura-primary/20 bg-aura-primary/5 px-4 py-1.5 text-xs font-black uppercase tracking-widest text-aura-primary backdrop-blur-md">
+          <div className="inline-flex items-center rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-xs font-black uppercase tracking-widest text-primary backdrop-blur-md">
             <Shield className="h-4 w-4 mr-2" />
             System Audit
           </div>
           <h1 className="text-6xl font-black tracking-tighter uppercase leading-none text-foreground">
-            Registry{" "}
-            <span className="bg-gradient-to-r from-aura-primary to-aura-secondary bg-clip-text text-transparent">
-              LOGS
-            </span>
+            Audit <span className="text-primary">LOGS</span>
           </h1>
         </div>
 
         <div className="flex gap-4">
           <Button
-            variant="glass"
+            variant="outline"
             className="rounded-2xl h-14 px-8 group/btn"
             asChild
           >
             <Link href="/admin/dashboard">
               <ArrowLeft className="mr-3 h-4 w-4 transition-transform group-hover/btn:-translate-x-1" />
-              Back to Hub
+              Back to Dashboard
             </Link>
           </Button>
         </div>
@@ -66,20 +64,20 @@ export default async function AuditLogsPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-border/40 bg-foreground/[0.02]">
-                <th className="p-8 text-[10px] font-black uppercase tracking-widest text-foreground/40">
+              <tr className="border-b border-border/40 bg-foreground/2">
+                <th className="p-8 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
                   Timestamp
                 </th>
-                <th className="p-8 text-[10px] font-black uppercase tracking-widest text-foreground/40">
+                <th className="p-8 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
                   Actor
                 </th>
-                <th className="p-8 text-[10px] font-black uppercase tracking-widest text-foreground/40">
+                <th className="p-8 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
                   Action
                 </th>
-                <th className="p-8 text-[10px] font-black uppercase tracking-widest text-foreground/40">
+                <th className="p-8 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
                   Entity
                 </th>
-                <th className="p-8 text-[10px] font-black uppercase tracking-widest text-foreground/40">
+                <th className="p-8 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
                   Metadata
                 </th>
               </tr>
@@ -88,11 +86,11 @@ export default async function AuditLogsPage() {
               {logs.map((log) => (
                 <tr
                   key={log.id}
-                  className="hover:bg-foreground/[0.01] transition-colors group"
+                  className="hover:bg-foreground/1 transition-colors group"
                 >
                   <td className="p-8">
                     <div className="flex items-center gap-3">
-                      <Clock className="h-4 w-4 text-foreground/20" />
+                      <Clock className="h-4 w-4 text-muted-foreground/70" />
                       <span className="text-xs font-bold font-mono text-foreground/60">
                         {new Date(log.createdAt).toLocaleString()}
                       </span>
@@ -103,7 +101,7 @@ export default async function AuditLogsPage() {
                       <span className="text-sm font-black uppercase tracking-tight text-foreground">
                         {log.actor?.name || "System"}
                       </span>
-                      <span className="text-[10px] font-medium text-foreground/40">
+                      <span className="text-[10px] font-medium text-muted-foreground">
                         {log.actor?.email || "automated@eventpass.io"}
                       </span>
                     </div>
@@ -117,7 +115,7 @@ export default async function AuditLogsPage() {
                           : log.action.includes("APPROVE") ||
                               log.action.includes("CREATE")
                             ? "bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20"
-                            : "bg-aura-primary/10 text-aura-primary border-aura-primary/20"
+                            : "bg-primary/10 text-primary border-primary/20"
                       }`}
                     >
                       {log.action.replace("_", " ")}
@@ -125,7 +123,7 @@ export default async function AuditLogsPage() {
                   </td>
                   <td className="p-8">
                     <div className="flex items-center gap-3">
-                      <FileText className="h-4 w-4 text-foreground/20" />
+                      <FileText className="h-4 w-4 text-muted-foreground/70" />
                       <span className="text-xs font-bold text-foreground/60 uppercase tracking-widest">
                         {log.entityType}
                       </span>
@@ -133,7 +131,7 @@ export default async function AuditLogsPage() {
                   </td>
                   <td className="p-8">
                     <div className="max-w-xs overflow-hidden text-ellipsis whitespace-nowrap">
-                      <code className="text-[10px] bg-foreground/[0.03] px-2 py-1 rounded font-mono text-foreground/40 border border-border/40">
+                      <code className="text-[10px] bg-foreground/3 px-2 py-1 rounded font-mono text-muted-foreground border border-border/40">
                         {log.metadata}
                       </code>
                     </div>
@@ -145,11 +143,10 @@ export default async function AuditLogsPage() {
         </div>
       </Card>
 
-      <div className="p-10 rounded-[2.5rem] bg-aura-primary/5 border border-aura-primary/10 flex items-center gap-6">
-        <Activity className="h-6 w-6 text-aura-primary" />
-        <p className="text-xs font-black text-foreground/40 leading-relaxed uppercase tracking-widest">
-          All system operations are cryptographically signed and immutable in
-          the AURA registry.
+      <div className="p-10 rounded-[2.5rem] bg-primary/5 border border-primary/10 flex items-center gap-6">
+        <Activity className="h-6 w-6 text-primary" />
+        <p className="text-xs font-black text-muted-foreground leading-relaxed uppercase tracking-widest">
+          All system operations are tracked and logged for accountability.
         </p>
       </div>
     </div>

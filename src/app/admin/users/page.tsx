@@ -47,17 +47,17 @@ export default async function AdminUsersPage() {
         <div className="space-y-4">
           <Link
             href="/admin/dashboard"
-            className="inline-flex items-center text-xs font-black uppercase tracking-widest text-foreground/40 hover:text-foreground transition-all group mb-4"
+            className="inline-flex items-center text-xs font-black uppercase tracking-widest text-muted-foreground hover:text-foreground transition-all group mb-4"
           >
             <ArrowLeft className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1" />
-            Back to Overseer
+            Back to Dashboard
           </Link>
-          <div className="inline-flex items-center rounded-full border border-aura-primary/20 bg-aura-primary/5 px-4 py-1.5 text-xs font-black uppercase tracking-widest text-aura-primary backdrop-blur-md">
+          <div className="inline-flex items-center rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-xs font-black uppercase tracking-widest text-primary backdrop-blur-md">
             <Users className="h-4 w-4 mr-2" />
-            Population Registry
+            User Management
           </div>
           <h1 className="text-6xl font-black tracking-tighter uppercase leading-none text-foreground">
-            Registry <span className="bg-gradient-to-r from-aura-primary via-aura-secondary to-aura-accent bg-clip-text text-transparent animate-gradient-x">ENTRIES</span>
+            User <span className="text-primary">ENTRIES</span>
           </h1>
         </div>
       </div>

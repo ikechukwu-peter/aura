@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Ticket, Maximize2, Sparkles, ShieldCheck, Download, Loader2, Zap } from "lucide-react";
+import { Ticket, Maximize2, Sparkles, ShieldCheck, Download, Loader2 } from "lucide-react";
+import Image from "next/image";
 import QRCode from "qrcode";
 import { toPng } from "html-to-image";
 import { Button } from "@/components/ui/button";
@@ -70,10 +71,10 @@ export function QRManager({ ticketCode, qrPayload, eventTitle }: QRManagerProps)
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <div className="p-4 rounded-2xl bg-foreground/[0.03] border border-border/60 flex flex-col items-center justify-center gap-2 group-hover:bg-aura-primary/5 group-hover:border-aura-primary/20 transition-all cursor-pointer">
-          <div className="relative p-3 rounded-xl bg-white flex items-center justify-center shadow-lg group-hover:shadow-aura-primary/10 transition-all">
+        <div className="p-4 rounded-2xl bg-foreground/3 border border-border/60 flex flex-col items-center justify-center gap-2 group-hover:bg-primary/5 group-hover:border-primary/30 transition-all cursor-pointer">
+          <div className="relative p-3 rounded-xl bg-white flex items-center justify-center shadow-lg transition-all">
             {qrDataUrl ? (
-              <img src={qrDataUrl} alt="QR Code" className="w-10 h-10" />
+              <Image src={qrDataUrl} alt="QR Code" width={40} height={40} unoptimized className="w-10 h-10" />
             ) : (
               <div className="grid grid-cols-4 gap-1 w-10 h-10">
                 {[...Array(16)].map((_, i) => (
@@ -81,54 +82,50 @@ export function QRManager({ ticketCode, qrPayload, eventTitle }: QRManagerProps)
                 ))}
               </div>
             )}
-            <div className="absolute inset-0 bg-aura-primary/0 group-hover:bg-aura-primary/5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all">
-              <Maximize2 className="h-4 w-4 text-aura-primary" />
+            <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all">
+              <Maximize2 className="h-4 w-4 text-primary" />
             </div>
           </div>
-          <span className="text-[9px] font-black uppercase tracking-widest text-foreground/40 group-hover:text-aura-primary transition-colors flex items-center gap-2">
+          <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground group-hover:text-primary transition-colors flex items-center gap-2">
             Expand QR
           </span>
         </div>
       </DialogTrigger>
-      <DialogContent className="max-w-[320px] sm:max-w-[340px] bg-background/80 backdrop-blur-3xl border-border/60 rounded-[2rem] p-0 overflow-hidden shadow-2xl">
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-aura-primary via-aura-secondary to-aura-primary" />
-        
+      <DialogContent className="max-w-[320px] sm:max-w-85 bg-background border-border/60 rounded-lg p-0 overflow-hidden shadow-2xl">
           <div className="p-4 space-y-4">
-            {/* Downloadable Area (Hidden from view, used for high-quality export) */}
-            <div className="absolute -left-[9999px] top-0">
+            <div className="absolute -left-2499.75 top-0">
               <div 
                 ref={ticketRef} 
-                className="bg-white p-10 space-y-8 w-[500px] flex flex-col items-center relative overflow-hidden"
+                className="bg-white p-10 space-y-8 w-125 flex flex-col items-center relative overflow-hidden"
               >
-                {/* Brand Sidebar */}
-                <div className="absolute top-0 left-0 h-full w-4 bg-gradient-to-b from-aura-primary via-aura-secondary to-aura-primary" />
-                
-                <div className="w-full flex justify-between items-start pl-6">
+                <div className="w-full flex justify-between items-start">
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
-                      <Zap className="h-4 w-4 text-aura-primary fill-aura-primary" />
-                      <p className="text-[12px] font-black uppercase tracking-[0.3em] text-aura-primary">AURA PASS</p>
+                      <Ticket className="h-4 w-4 text-primary" />
+                      <p className="text-[12px] font-black uppercase tracking-[0.3em] text-primary">Your ticket</p>
                     </div>
                     <h3 className="text-4xl font-black uppercase tracking-tighter text-slate-950 leading-none">{eventTitle}</h3>
                   </div>
                   <div className="flex flex-col items-end gap-1">
-                    <ShieldCheck className="h-8 w-8 text-aura-primary" />
+                    <ShieldCheck className="h-8 w-8 text-verified" />
                     <p className="text-[10px] font-black text-slate-400">VERIFIED</p>
                   </div>
                 </div>
 
-                {/* Ticket Stub Divider */}
                 <div className="w-full h-px border-t-2 border-dashed border-slate-200 relative my-4">
                   <div className="absolute -left-14 -top-3.5 h-7 w-7 rounded-full bg-white border border-slate-200" />
                   <div className="absolute -right-14 -top-3.5 h-7 w-7 rounded-full bg-white border border-slate-200" />
                 </div>
 
-                <div className="bg-slate-50 p-6 rounded-[2.5rem] border-2 border-slate-100 shadow-inner flex flex-col items-center gap-6">
-                  {qrDataUrl && (
-                    <img 
+                <div className="bg-slate-50 p-6 rounded-2xl border-2 border-slate-100 shadow-inner flex flex-col items-center gap-6">
+                {qrDataUrl && (
+                    <Image 
                       src={qrDataUrl} 
                       alt="Ticket QR Code" 
-                      className="w-[320px] h-[320px] object-contain mix-blend-multiply"
+                      width={320}
+                      height={320}
+                      unoptimized
+                      className="w-80 h-80 object-contain mix-blend-multiply"
                     />
                   )}
                   <div className="space-y-1 text-center">
@@ -136,32 +133,31 @@ export function QRManager({ ticketCode, qrPayload, eventTitle }: QRManagerProps)
                       {ticketCode}
                     </p>
                     <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                      Entry Authorization Token
+                      Entry ticket
                     </p>
                   </div>
                 </div>
 
-                <div className="w-full flex justify-between items-center pl-6 pt-4 border-t border-slate-100">
+                <div className="w-full flex justify-between items-center pt-4 border-t border-slate-100">
                   <div className="flex gap-4">
-                    <div className="h-10 w-1 bg-aura-primary/20 rounded-full" />
+                    <div className="h-10 w-1 bg-primary/20 rounded-full" />
                     <div className="space-y-1">
-                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Security</p>
-                      <p className="text-[10px] font-black uppercase text-slate-900">Encrypted QR</p>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Seat</p>
+                      <p className="text-[10px] font-black uppercase text-slate-900">General Admission</p>
                     </div>
                   </div>
                   <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-300">
-                    &copy; {new Date().getFullYear()} AURA NEURAL SYSTEMS
+                    &copy; {new Date().getFullYear()}
                   </p>
                 </div>
               </div>
             </div>
 
-            {/* Display Area */}
-            <div className="bg-white p-5 rounded-[1.5rem] space-y-4">
+            <div className="bg-white p-5 rounded-2xl space-y-4">
               <DialogHeader className="space-y-2">
-              <div className="inline-flex items-center rounded-full border border-aura-primary/20 bg-aura-primary/5 px-2 py-0.5 text-[8px] font-black uppercase tracking-widest text-aura-primary">
+              <div className="inline-flex items-center rounded-full border border-primary/30 bg-primary/10 px-2 py-0.5 text-[8px] font-black uppercase tracking-widest text-primary">
                 <Sparkles className="h-2 w-2 mr-1" />
-                Event Pass
+                Event ticket
               </div>
               <DialogTitle className="text-xl font-black tracking-tighter uppercase text-slate-950 leading-tight">
                 {eventTitle}
@@ -176,10 +172,13 @@ export function QRManager({ ticketCode, qrPayload, eventTitle }: QRManagerProps)
 
             <div className="relative flex flex-col items-center justify-center p-4 rounded-xl bg-slate-50 border border-slate-100 shadow-inner">
               {qrDataUrl && (
-                  <img 
+                  <Image 
                     src={qrDataUrl} 
                     alt="Ticket QR Code" 
-                    className="w-full aspect-square max-w-[160px] object-contain"
+                    width={160}
+                    height={160}
+                    unoptimized
+                    className="w-full aspect-square max-w-40 object-contain"
                   />
                 )}
             </div>
@@ -187,10 +186,10 @@ export function QRManager({ ticketCode, qrPayload, eventTitle }: QRManagerProps)
             <div className="p-3 rounded-lg bg-slate-900 space-y-2">
               <div className="flex items-center justify-between text-[8px] font-black uppercase tracking-widest">
                 <span className="text-slate-400 flex items-center gap-1.5">
-                  <ShieldCheck className="h-3 w-3 text-green-500" />
+                  <ShieldCheck className="h-3 w-3 text-verified" />
                   Verified
                 </span>
-                <span className="text-green-500">Active</span>
+                <span className="text-verified">Active</span>
               </div>
               <p className="text-[7px] text-slate-500 font-black uppercase tracking-[0.05em] text-center leading-tight opacity-80">
                 Non-transferable • Secured • Present for entry
@@ -202,20 +201,21 @@ export function QRManager({ ticketCode, qrPayload, eventTitle }: QRManagerProps)
             <Button 
               onClick={handleDownload}
               disabled={isDownloading}
-              className="w-full h-10 rounded-xl bg-aura-primary hover:bg-aura-primary/90 text-white font-black uppercase tracking-widest text-[8px] shadow-glow-aura transition-all cursor-pointer group"
+              variant="default"
+              className="w-full h-10 rounded-xl font-black uppercase tracking-widest text-[8px] transition-all cursor-pointer group"
             >
               {isDownloading ? (
                 <Loader2 className="h-3 w-3 animate-spin" />
               ) : (
                 <>
                   <Download className="h-3.5 w-3.5 mr-1.5 group-hover:translate-y-0.5 transition-transform" />
-                  Save Pass
+                  Save ticket
                 </>
               )}
             </Button>
             
-            <p className="text-center text-[7px] text-foreground/30 font-black uppercase tracking-widest">
-              Compact high-res pass
+            <p className="text-center text-[7px] text-muted-foreground/70 font-black uppercase tracking-widest">
+              Compact high-res ticket
             </p>
           </div>
         </div>

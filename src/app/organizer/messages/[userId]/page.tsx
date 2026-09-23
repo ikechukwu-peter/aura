@@ -41,14 +41,14 @@ export default async function OrganizerConversationPage({
   return (
     <div className="container py-16 space-y-12">
       <div className="space-y-4">
-        <div className="inline-flex items-center rounded-full border border-aura-primary/20 bg-aura-primary/5 px-4 py-1.5 text-xs font-black uppercase tracking-widest text-aura-primary backdrop-blur-md">
+        <div className="inline-flex items-center rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-xs font-black uppercase tracking-widest text-primary backdrop-blur-md">
           <MessageSquare className="h-4 w-4 mr-2" />
-          Neural Link Established
+          Conversation
         </div>
         <h1 className="text-6xl font-black tracking-tighter uppercase leading-none">
-          Signal <span className="bg-gradient-to-r from-aura-primary via-aura-secondary to-aura-accent bg-clip-text text-transparent animate-gradient-x">TRACE</span>
+          Conversation
         </h1>
-        <p className="text-[10px] font-black uppercase tracking-widest text-foreground/40">
+        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
           Communicating with {otherUser.name || otherUser.email}
         </p>
       </div>

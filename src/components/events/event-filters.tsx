@@ -23,11 +23,7 @@ import {
 } from "../ui/sheet";
 import { Filter, DollarSign, ArrowUpDown, MapPin, CheckSquare, Zap } from "lucide-react";
 
-interface EventFiltersProps {
-  categories: string[];
-}
-
-export function EventFilters({ categories }: EventFiltersProps) {
+export function EventFilters() {
   const router = useRouter();
   const searchParams = useSearchParams();
   
@@ -123,8 +119,8 @@ export function EventFilters({ categories }: EventFiltersProps) {
         params.set("sort", value);
         router.push(`/events?${params.toString()}`);
       }}>
-        <SelectTrigger className="w-[180px] h-12 bg-background border-border/60 rounded-xl font-bold">
-          <ArrowUpDown className="mr-2 h-4 w-4 opacity-50" />
+        <SelectTrigger className="w-45 h-10 bg-background border-border rounded-lg font-medium">
+          <ArrowUpDown className="mr-2 h-4 w-4 text-muted-foreground" />
           <SelectValue placeholder="Sort by" />
         </SelectTrigger>
         <SelectContent>
@@ -138,50 +134,47 @@ export function EventFilters({ categories }: EventFiltersProps) {
 
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <SheetTrigger asChild>
-          <Button variant="outline" className="h-12 px-6 rounded-xl font-bold flex items-center gap-2 border-border/60 hover:bg-aura-primary/5 hover:border-aura-primary/30 transition-all">
+          <Button variant="outline" className="h-10 px-4 rounded-lg font-medium flex items-center gap-2 border-border hover:bg-primary/5 hover:border-primary/30 transition-colors">
             <Filter className="h-4 w-4" />
             Filters
             {activeFiltersCount > 0 && (
-              <span className="ml-1 flex h-5 w-5 items-center justify-center rounded-full bg-aura-primary text-[10px] font-black text-white">
+              <span className="ml-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[11px] font-semibold text-white">
                 {activeFiltersCount}
               </span>
             )}
           </Button>
         </SheetTrigger>
-      <SheetContent className="w-full sm:max-w-md bg-background/80 backdrop-blur-3xl border-border/60 p-0 overflow-hidden rounded-l-[3rem] shadow-2xl flex flex-col h-full">
-        <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-aura-primary via-aura-secondary to-aura-accent" />
-        
-        <SheetHeader className="p-10 pb-6 border-b border-border/60 shrink-0">
+      <SheetContent className="w-full sm:max-w-md bg-background border-border p-0 overflow-hidden flex flex-col h-full">
+        <SheetHeader className="p-6 pb-4 border-b border-border shrink-0">
           <div className="flex items-center justify-between">
-            <div className="space-y-2">
-              <SheetTitle className="text-3xl font-black tracking-tighter text-foreground">
-                Filter <span className="bg-gradient-to-r from-aura-primary to-aura-secondary bg-clip-text text-transparent uppercase">Reality</span>
+            <div className="space-y-1">
+              <SheetTitle className="text-xl font-bold tracking-tight text-foreground">
+                Filter events
               </SheetTitle>
-              <SheetDescription className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/40">
-                Calibrate your experience parameters
+              <SheetDescription className="text-xs font-medium text-muted-foreground">
+                Narrow down your search results
               </SheetDescription>
             </div>
             <Button 
               variant="ghost" 
               size="sm" 
               onClick={clearFilters}
-              className="h-10 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest text-foreground/40 hover:text-red-500 hover:bg-red-500/5 transition-all"
+              className="h-9 px-3 rounded-lg text-xs font-medium text-muted-foreground hover:text-red-500 hover:bg-red-500/5 transition-colors"
             >
               Reset
             </Button>
           </div>
         </SheetHeader>
 
-        <div className="p-10 space-y-10 overflow-y-auto flex-1">
-          {/* Quick Shortcuts */}
-          <div className="space-y-6">
-            <Label className="text-[10px] font-black uppercase tracking-widest text-foreground/40">Temporal presets</Label>
+        <div className="p-6 space-y-6 overflow-y-auto flex-1">
+          <div className="space-y-4">
+            <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Quick date filters</Label>
             <div className="grid grid-cols-2 gap-3">
               <Button 
                 variant="outline" 
                 size="sm" 
                 onClick={setToday}
-                className="h-12 rounded-xl border-border/60 bg-foreground/[0.02] text-[10px] font-black uppercase tracking-widest hover:bg-aura-primary/5 hover:border-aura-primary/30 transition-all"
+                className="h-10 rounded-lg border-border bg-muted/30 text-xs font-medium hover:bg-primary/5 hover:border-primary/30 transition-colors"
               >
                 Today
               </Button>
@@ -189,149 +182,149 @@ export function EventFilters({ categories }: EventFiltersProps) {
                 variant="outline" 
                 size="sm" 
                 onClick={setThisWeekend}
-                className="h-12 rounded-xl border-border/60 bg-foreground/[0.02] text-[10px] font-black uppercase tracking-widest hover:bg-aura-secondary/5 hover:border-aura-secondary/30 transition-all"
+                className="h-10 rounded-lg border-border bg-muted/30 text-xs font-medium hover:bg-primary/5 hover:border-primary/30 transition-colors"
               >
-                This Weekend
+                This weekend
               </Button>
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label className="text-[8px] font-black uppercase tracking-widest text-foreground/20">Start date</Label>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label className="text-xs font-medium text-muted-foreground">Start date</Label>
                 <Input
                   type="date"
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
-                  className="h-12 bg-foreground/[0.02] border-border/60 rounded-xl text-xs font-bold"
+                  className="h-10 bg-background border-border rounded-lg text-sm"
                 />
               </div>
-              <div className="space-y-2">
-                <Label className="text-[8px] font-black uppercase tracking-widest text-foreground/20">End date</Label>
+              <div className="space-y-1.5">
+                <Label className="text-xs font-medium text-muted-foreground">End date</Label>
                 <Input
                   type="date"
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
-                  className="h-12 bg-foreground/[0.02] border-border/60 rounded-xl text-xs font-bold"
+                  className="h-10 bg-background border-border rounded-lg text-sm"
                 />
               </div>
             </div>
           </div>
 
-          <div className="space-y-6">
-            <Label className="text-[10px] font-black uppercase tracking-widest text-foreground/40">Classification</Label>
+          <div className="space-y-4">
+            <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Category</Label>
             <Select value={category} onValueChange={setCategory}>
-              <SelectTrigger className="h-14 bg-foreground/[0.02] border-border/60 rounded-2xl text-[10px] font-black uppercase tracking-widest">
+              <SelectTrigger className="h-11 bg-background border-border rounded-lg text-sm">
                 <SelectValue placeholder="All categories" />
               </SelectTrigger>
-              <SelectContent className="bg-background/80 backdrop-blur-3xl border-border/60 rounded-2xl">
-                <SelectItem value="all" className="text-[10px] font-black uppercase tracking-widest">All classifications</SelectItem>
-                <SelectItem value="Music" className="text-[10px] font-black uppercase tracking-widest">Audio experiences</SelectItem>
-                <SelectItem value="Workshop" className="text-[10px] font-black uppercase tracking-widest">Skill induction</SelectItem>
-                <SelectItem value="Conference" className="text-[10px] font-black uppercase tracking-widest">Knowledge summit</SelectItem>
-                <SelectItem value="Social" className="text-[10px] font-black uppercase tracking-widest">Neural social</SelectItem>
+              <SelectContent className="bg-background border-border rounded-lg">
+                <SelectItem value="all" className="text-sm">All categories</SelectItem>
+                <SelectItem value="Music" className="text-sm">Music</SelectItem>
+                <SelectItem value="Workshop" className="text-sm">Workshop</SelectItem>
+                <SelectItem value="Conference" className="text-sm">Conference</SelectItem>
+                <SelectItem value="Social" className="text-sm">Social</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
-          <div className="space-y-6">
-            <Label className="text-[10px] font-black uppercase tracking-widest text-foreground/40">Location nexus</Label>
+          <div className="space-y-4">
+            <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Location</Label>
             <div className="relative">
-              <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground/20" />
+              <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Location code..."
+                placeholder="City or venue..."
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
-                className="h-14 pl-12 bg-foreground/[0.02] border-border/60 rounded-2xl font-bold uppercase tracking-wider text-sm"
+                className="h-11 pl-10 bg-background border-border rounded-lg text-sm"
               />
             </div>
           </div>
 
-          <div className="space-y-6">
-            <Label className="text-[10px] font-black uppercase tracking-widest text-foreground/40">Availability matrix</Label>
-            <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-4">
+            <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Availability</Label>
+            <div className="grid grid-cols-2 gap-3">
               <div 
                 onClick={() => setAvailableOnly(!availableOnly)}
-                className={`p-4 rounded-2xl border transition-all cursor-pointer flex flex-col gap-3 ${
+                className={`p-3 rounded-lg border transition-colors cursor-pointer flex flex-col gap-2 ${
                   availableOnly 
-                    ? "bg-aura-primary/5 border-aura-primary/40 shadow-glow-aura/10" 
-                    : "bg-foreground/[0.02] border-border/60 hover:border-foreground/20"
+                    ? "bg-primary/5 border-primary/40" 
+                    : "bg-muted/30 border-border hover:border-foreground/20"
                 }`}
               >
-                <div className={`h-6 w-6 rounded-lg border flex items-center justify-center transition-all ${
-                  availableOnly ? "bg-aura-primary border-aura-primary text-white" : "border-foreground/20"
+                <div className={`h-5 w-5 rounded border flex items-center justify-center transition-colors ${
+                  availableOnly ? "bg-primary border-primary text-white" : "border-border"
                 }`}>
-                  {availableOnly && <CheckSquare className="h-4 w-4" />}
+                  {availableOnly && <CheckSquare className="h-3.5 w-3.5" />}
                 </div>
-                <span className="text-[10px] font-black uppercase tracking-widest">In stock</span>
+                <span className="text-xs font-medium">Available tickets</span>
               </div>
 
               <div 
                 onClick={() => setFreeOnly(!freeOnly)}
-                className={`p-4 rounded-2xl border transition-all cursor-pointer flex flex-col gap-3 ${
+                className={`p-3 rounded-lg border transition-colors cursor-pointer flex flex-col gap-2 ${
                   freeOnly 
-                    ? "bg-aura-secondary/5 border-aura-secondary/40 shadow-glow-aura/10" 
-                    : "bg-foreground/[0.02] border-border/60 hover:border-foreground/20"
+                    ? "bg-primary/5 border-primary/40" 
+                    : "bg-muted/30 border-border hover:border-foreground/20"
                 }`}
               >
-                <div className={`h-6 w-6 rounded-lg border flex items-center justify-center transition-all ${
-                  freeOnly ? "bg-aura-secondary border-aura-secondary text-white" : "border-foreground/20"
+                <div className={`h-5 w-5 rounded border flex items-center justify-center transition-colors ${
+                  freeOnly ? "bg-primary border-primary text-white" : "border-border"
                 }`}>
-                  {freeOnly && <Zap className="h-4 w-4" />}
+                  {freeOnly && <Zap className="h-3.5 w-3.5" />}
                 </div>
-                <span className="text-[10px] font-black uppercase tracking-widest">Open access</span>
+                <span className="text-xs font-medium">Free events</span>
               </div>
             </div>
           </div>
 
-          <div className="space-y-6">
-            <Label className="text-[10px] font-black uppercase tracking-widest text-foreground/40">Resource credits</Label>
-            <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-4">
+            <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Price range</Label>
+            <div className="grid grid-cols-2 gap-3">
               <div className="relative">
-                <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground/20" />
+                <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                   type="number"
                   placeholder="Min"
                   value={minPrice}
                   onChange={(e) => setMinPrice(e.target.value)}
-                  className="h-14 pl-12 bg-foreground/[0.02] border-border/60 rounded-2xl font-bold"
+                  className="h-11 pl-10 bg-background border-border rounded-lg text-sm"
                 />
               </div>
               <div className="relative">
-                <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground/20" />
+                <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                   type="number"
                   placeholder="Max"
                   value={maxPrice}
                   onChange={(e) => setMaxPrice(e.target.value)}
-                  className="h-14 pl-12 bg-foreground/[0.02] border-border/60 rounded-2xl font-bold"
+                  className="h-11 pl-10 bg-background border-border rounded-lg text-sm"
                 />
               </div>
             </div>
           </div>
 
-          <div className="space-y-6">
-            <Label className="text-[10px] font-black uppercase tracking-widest text-foreground/40">Sequence order</Label>
+          <div className="space-y-4">
+            <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Sort order</Label>
             <Select value={sort} onValueChange={setSort}>
-              <SelectTrigger className="h-14 bg-foreground/[0.02] border-border/60 rounded-2xl text-[10px] font-black uppercase tracking-widest">
+              <SelectTrigger className="h-11 bg-background border-border rounded-lg text-sm">
                 <SelectValue placeholder="Sort by" />
               </SelectTrigger>
-              <SelectContent className="bg-background/80 backdrop-blur-3xl border-border/60 rounded-2xl">
-                <SelectItem value="date_asc" className="text-[10px] font-black uppercase tracking-widest">Chronological (Asc)</SelectItem>
-                <SelectItem value="date_desc" className="text-[10px] font-black uppercase tracking-widest">Chronological (Desc)</SelectItem>
-                <SelectItem value="price_asc" className="text-[10px] font-black uppercase tracking-widest">Credits (Low to high)</SelectItem>
-                <SelectItem value="price_desc" className="text-[10px] font-black uppercase tracking-widest">Credits (High to low)</SelectItem>
-                <SelectItem value="newest" className="text-[10px] font-black uppercase tracking-widest">Newly discovered</SelectItem>
+              <SelectContent className="bg-background border-border rounded-lg">
+                <SelectItem value="date_asc" className="text-sm">Date: Earliest first</SelectItem>
+                <SelectItem value="date_desc" className="text-sm">Date: Latest first</SelectItem>
+                <SelectItem value="price_asc" className="text-sm">Price: Low to high</SelectItem>
+                <SelectItem value="price_desc" className="text-sm">Price: High to low</SelectItem>
+                <SelectItem value="newest" className="text-sm">Recently added</SelectItem>
               </SelectContent>
             </Select>
           </div>
         </div>
 
-        <SheetFooter className="p-10 bg-background/50 border-t border-border/60 backdrop-blur-xl shrink-0">
+        <SheetFooter className="p-6 bg-background border-t border-border shrink-0">
           <Button 
             onClick={applyFilters} 
-            variant="aura" 
-            className="w-full h-16 rounded-2xl font-black uppercase tracking-[0.2em] text-xs shadow-glow-aura"
+            variant="default" 
+            className="w-full h-11 rounded-lg text-sm font-semibold"
           >
-            Apply parameters
+            Apply filters
           </Button>
         </SheetFooter>
       </SheetContent>

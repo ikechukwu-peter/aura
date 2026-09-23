@@ -4,13 +4,13 @@ import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaCh
 
 export function SalesTrend({ data }: { data: { date: string; sales: number }[] }) {
   return (
-    <div className="h-[300px] w-full">
+    <div className="h-75 w-full">
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart data={data}>
           <defs>
             <linearGradient id="colorSales" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="var(--aura-primary)" stopOpacity={0.3}/>
-              <stop offset="95%" stopColor="var(--aura-primary)" stopOpacity={0}/>
+              <stop offset="5%" stopColor="#D97706" stopOpacity={0.3}/>
+              <stop offset="95%" stopColor="#D97706" stopOpacity={0}/>
             </linearGradient>
           </defs>
           <CartesianGrid strokeDasharray="3 3" vertical={false} opacity={0.1} />
@@ -28,7 +28,7 @@ export function SalesTrend({ data }: { data: { date: string; sales: number }[] }
             tick={{ fill: 'currentColor', opacity: 0.5 }}
           />
           <Tooltip 
-            cursor={{ stroke: 'var(--aura-primary)', strokeWidth: 2 }}
+            cursor={{ stroke: '#D97706', strokeWidth: 2 }}
             contentStyle={{ 
               backgroundColor: 'hsl(var(--background))', 
               borderColor: 'hsl(var(--border))',
@@ -40,7 +40,7 @@ export function SalesTrend({ data }: { data: { date: string; sales: number }[] }
           <Area 
             type="monotone" 
             dataKey="sales" 
-            stroke="var(--aura-primary)" 
+            stroke="#D97706" 
             fillOpacity={1} 
             fill="url(#colorSales)" 
             strokeWidth={3}

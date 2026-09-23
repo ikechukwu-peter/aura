@@ -19,7 +19,7 @@ export default async function AdminDashboard() {
   const totalEvents = await prisma.event.count();
   const pendingEventsData = await prisma.event.findMany({
     where: { approvedByAdmin: false, status: "DRAFT" },
-    include: { organizer: true } as any,
+    include: { organizer: true },
     orderBy: { createdAt: "desc" },
   });
   const auditLogsData = await prisma.auditLog.findMany({
@@ -28,60 +28,62 @@ export default async function AdminDashboard() {
     include: { actor: true },
   });
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const pendingEvents = pendingEventsData as any[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const auditLogs = auditLogsData as any[];
 
   return (
     <div className="container py-16 space-y-12">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
         <div className="space-y-4">
-          <div className="inline-flex items-center rounded-full border border-aura-primary/20 bg-aura-primary/5 px-4 py-1.5 text-xs font-black uppercase tracking-widest text-aura-primary backdrop-blur-md mb-4">
+          <div className="inline-flex items-center rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-xs font-black uppercase tracking-widest text-primary backdrop-blur-md mb-4">
             <Shield className="h-4 w-4 mr-2" />
-            Neural Infrastructure
+            Admin Dashboard
           </div>
           <h1 className="text-6xl font-black tracking-tighter leading-none text-foreground">
-            Core <span className="bg-gradient-to-r from-aura-primary via-aura-secondary to-aura-accent bg-clip-text text-transparent animate-gradient-x uppercase">Overseer</span>
+            Admin <span className="text-primary uppercase">Overseer</span>
           </h1>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Link href="/admin/users" className="block">
-          <Card className="relative overflow-hidden group bg-background border-border/60 hover:border-aura-primary/30 transition-all duration-300 shadow-card rounded-[2rem] h-full">
-            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity text-aura-primary">
+          <Card className="relative overflow-hidden group bg-background border-border/60 hover:border-primary/30 transition-all duration-300 shadow-card rounded-4xl h-full">
+            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity text-primary">
               <Users className="h-12 w-12" />
             </div>
             <CardHeader className="pb-2">
-              <CardTitle className="text-[10px] font-black uppercase tracking-widest text-foreground/40">Total citizens</CardTitle>
+              <CardTitle className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Total users</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-4xl font-black tracking-tighter text-foreground group-hover:text-aura-primary transition-colors">
+              <div className="text-4xl font-black tracking-tighter text-foreground group-hover:text-primary transition-colors">
                 {totalUsers.toLocaleString()}
               </div>
             </CardContent>
           </Card>
         </Link>
 
-        <Card className="relative overflow-hidden group bg-background border-border/60 hover:border-aura-secondary/30 transition-all duration-300 shadow-card rounded-[2rem]">
-          <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity text-aura-secondary">
+        <Card className="relative overflow-hidden group bg-background border-border/60 hover:border-primary/30 transition-all duration-300 shadow-card rounded-4xl">
+          <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity text-primary">
             <Calendar className="h-12 w-12" />
           </div>
           <CardHeader className="pb-2">
-            <CardTitle className="text-[10px] font-black uppercase tracking-widest text-foreground/40">Active events</CardTitle>
+            <CardTitle className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Active events</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-4xl font-black tracking-tighter text-foreground group-hover:text-aura-secondary transition-colors">
+            <div className="text-4xl font-black tracking-tighter text-foreground group-hover:text-primary transition-colors">
               {totalEvents.toLocaleString()}
             </div>
           </CardContent>
         </Card>
 
-        <Card className="relative overflow-hidden group bg-background border-border/60 hover:border-amber-500/30 transition-all duration-300 shadow-card rounded-[2rem]">
+        <Card className="relative overflow-hidden group bg-background border-border/60 hover:border-amber-500/30 transition-all duration-300 shadow-card rounded-4xl">
           <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity text-amber-500">
             <AlertCircle className="h-12 w-12" />
           </div>
           <CardHeader className="pb-2">
-            <CardTitle className="text-[10px] font-black uppercase tracking-widest text-foreground/40">Pending verification</CardTitle>
+            <CardTitle className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Pending verification</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-4xl font-black tracking-tighter text-amber-500">
@@ -90,15 +92,15 @@ export default async function AdminDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="relative overflow-hidden group bg-background border-border/60 hover:border-aura-accent/30 transition-all duration-300 shadow-card rounded-[2rem]">
-          <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity text-aura-accent">
+        <Card className="relative overflow-hidden group bg-background border-border/60 hover:border-primary/30 transition-all duration-300 shadow-card rounded-4xl">
+          <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity text-primary">
             <Activity className="h-12 w-12" />
           </div>
           <CardHeader className="pb-2">
-            <CardTitle className="text-[10px] font-black uppercase tracking-widest text-foreground/40">Neural status</CardTitle>
+            <CardTitle className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">System status</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-4xl font-black tracking-tighter text-aura-accent uppercase">
+            <div className="text-4xl font-black tracking-tighter text-primary uppercase">
               Optimal
             </div>
           </CardContent>
@@ -107,10 +109,10 @@ export default async function AdminDashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
         <Card className="lg:col-span-2 rounded-[2.5rem] bg-background border border-border/60 shadow-card overflow-hidden">
-          <CardHeader className="p-10 pb-6 border-b border-border/40 bg-foreground/[0.01]">
+          <CardHeader className="p-10 pb-6 border-b border-border/40 bg-foreground/1">
             <CardTitle className="text-xl font-black tracking-tight flex items-center gap-3">
               <AlertCircle className="h-5 w-5 text-amber-500" />
-              Deployment requests
+              Event submissions
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
@@ -119,9 +121,9 @@ export default async function AdminDashboard() {
         </Card>
 
         <Card className="rounded-[2.5rem] bg-background border border-border/60 shadow-card overflow-hidden">
-          <CardHeader className="p-10 pb-6 border-b border-border/40 bg-foreground/[0.01]">
+          <CardHeader className="p-10 pb-6 border-b border-border/40 bg-foreground/1">
             <CardTitle className="text-xl font-black tracking-tight flex items-center gap-3">
-              <Activity className="h-5 w-5 text-aura-primary" />
+              <Activity className="h-5 w-5 text-primary" />
               Audit records
             </CardTitle>
           </CardHeader>
@@ -129,18 +131,18 @@ export default async function AdminDashboard() {
             <div className="space-y-6">
               {auditLogs.map((log) => (
                 <div key={log.id} className="flex gap-4">
-                  <div className="h-2 w-2 rounded-full bg-aura-primary mt-1.5 shrink-0 shadow-glow-aura" />
+                  <div className="h-2 w-2 rounded-full bg-primary mt-1.5 shrink-0" />
                   <div className="space-y-1">
                     <p className="text-xs font-bold text-foreground/70 leading-relaxed">
                       <span className="text-foreground font-black">{log.actor.name || "System"}</span> {log.action}
                     </p>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-foreground/20">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70">
                       {formatDate(log.createdAt)}
                     </p>
                   </div>
                 </div>
               ))}
-              <Button variant="glass" className="w-full h-12 rounded-xl text-[10px] font-black uppercase tracking-widest mt-4 cursor-pointer" asChild>
+              <Button variant="outline" className="w-full h-12 rounded-xl text-[10px] font-black uppercase tracking-widest mt-4 cursor-pointer" asChild>
                 <Link href="/admin/audit">Full audit history</Link>
               </Button>
             </div>

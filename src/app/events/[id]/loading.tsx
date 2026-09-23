@@ -13,7 +13,7 @@ export default function Loading() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
         <div className="lg:col-span-2 space-y-12">
           {/* Hero Skeleton */}
-          <Skeleton className="aspect-video rounded-[2rem]" />
+          <Skeleton className="aspect-video rounded-4xl" />
 
           <div className="space-y-8">
             <div className="flex items-center gap-4">
@@ -61,7 +61,7 @@ export default function Loading() {
                 <Skeleton className="h-12 w-full" />
                 <Skeleton className="h-12 w-full" />
               </div>
-              <Skeleton className="h-16 w-full rounded-[1.5rem]" />
+              <Skeleton className="h-16 w-full rounded-3xl" />
             </CardContent>
           </Card>
 

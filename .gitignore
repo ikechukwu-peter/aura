@@ -38,3 +38,9 @@ pnpm-debug.log*
 
 # Temporary files
 *.txt
+
+# Build / cache artefacts
+tsconfig.tsbuildinfo
+
+# Trae-local helper scripts / caches (docs render helpers, not part of project)
+.trae/

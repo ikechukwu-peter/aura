@@ -1,0 +1,93 @@
+project:
+  name: Aura
+  subtitle: Ticketing platform — 4-tier oversell defense
+  accent: amber
+  theme: editorial
+
+layers:
+  - id: edge
+    label: Browser / CDN
+    nodes:
+      - id: next
+        label: Next.js App Router
+        sublabel: RSC + Server Actions
+        highlight: true
+      - id: qr
+        label: QR Check-in UI
+        sublabel: offline signature verify
+
+  - id: app
+    label: Application
+    nodes:
+      - id: pages
+        label: Pages
+        sublabel: home · events · dashboard · admin
+      - id: actions
+        label: Server Actions
+        sublabel: RBAC ownership checks per call
+
+  - id: services
+    label: Services
+    nodes:
+      - id: ticketing
+        label: ticketing.ts
+        sublabel: 4-tier oversell engine
+        highlight: true
+        notes:
+          - Tier 1  CAS UPDATE ... WHERE
+          - Tier 2  idempotencyKey UNIQUE
+          - Tier 3  ticketIndex UNIQUE
+          - Tier 4  reconcileCapacity()
+      - id: auth
+        label: auth.ts
+        sublabel: JWT · bcrypt cost 12
+      - id: reconciler
+        label: Capacity Reconciler
+        sublabel: cron + per-confirm
+
+  - id: data
+    label: Data
+    nodes:
+      - id: pg
+        label: PostgreSQL
+        sublabel: CAS writes · transactions
+        highlight: true
+        notes:
+          - @@unique eventId + ticketIndex
+          - Reservation.idempotencyKey UNIQUE
+          - SERIALIZABLE isolation option
+      - id: audit
+        label: AuditLog
+        sublabel: append-only, no UPDATE/DELETE
+
+connections:
+  - from: next
+    to: pages
+  - from: pages
+    to: actions
+  - from: actions
+    to: ticketing
+    weight: bold
+  - from: actions
+    to: auth
+  - from: ticketing
+    to: pg
+    weight: bold
+    label: CAS + idempotency writes
+  - from: auth
+    to: next
+    label: httpOnly signed cookie
+  - from: qr
+    to: ticketing
+    label: scan / consume
+  - from: reconciler
+    to: ticketing
+  - from: reconciler
+    to: pg
+    label: drift fix + audit
+  - from: ticketing
+    to: audit
+  - from: auth
+    to: audit
+  - from: pg
+    to: audit

@@ -6,16 +6,23 @@ import { useTheme } from "next-themes";
 
 export default function ThemeToggle() {
   const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(() => setMounted(true), []);
 
   return (
     <button
       onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-      className="relative h-10 w-10 flex items-center justify-center rounded-xl glass glass-hover border-border/40 dark:border-border cursor-pointer overflow-hidden group transition-all active:scale-90"
+      className="h-9 w-9 inline-flex items-center justify-center rounded-md border border-border bg-background hover:bg-accent text-foreground transition-colors active:scale-95"
       aria-label="Toggle theme"
     >
-      <div className="absolute inset-0 bg-gradient-to-tr from-indigo-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-      <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 text-amber-500 drop-shadow-[0_0_8px_rgba(245,158,11,0.4)]" />
-      <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 text-indigo-400 drop-shadow-[0_0_8px_rgba(129,140,248,0.4)]" />
+      {!mounted ? (
+        <Sun className="h-4 w-4 opacity-0" />
+      ) : (
+        <>
+          <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+          <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+        </>
+      )}
       <span className="sr-only">Toggle theme</span>
     </button>
   );

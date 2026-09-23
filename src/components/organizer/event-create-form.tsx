@@ -178,27 +178,27 @@ export function EventCreateForm({ initialData, isEditing = false }: EventCreateF
   return (
     <div className="max-w-3xl mx-auto py-16 space-y-12">
       <div className="space-y-4">
-        <div className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-sm font-medium text-indigo-300 backdrop-blur-md">
+        <div className="inline-flex items-center rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary backdrop-blur-md">
           <Sparkles className="h-4 w-4 mr-2" />
-          Event Architect
+          Event Setup
         </div>
         <h1 className="text-5xl font-black tracking-tighter uppercase leading-none">
-          {isEditing ? 'Edit' : 'Create'} <span className="bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">{isEditing ? 'Experience' : 'New Experience'}</span>
+          {isEditing ? 'Edit' : 'Create'} <span className="text-primary">{isEditing ? 'Event' : 'New Event'}</span>
         </h1>
-        <p className="text-xl text-white/40 font-bold uppercase tracking-tight">Step {step} of 4: {step === 1 ? "Fundamentals" : step === 2 ? "Logistics" : step === 3 ? "Inventory" : "Visuals"}</p>
+        <p className="text-xl text-muted-foreground font-bold uppercase tracking-tight">Step {step} of 4: {step === 1 ? "Fundamentals" : step === 2 ? "Logistics" : step === 3 ? "Inventory" : "Visuals"}</p>
       </div>
 
       <div className="mb-12 flex justify-between items-center relative px-4">
-         <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-[2px] bg-white/5 -z-10" />
-         <div className="absolute left-0 top-1/2 -translate-y-1/2 h-[2px] bg-gradient-to-r from-indigo-500 to-cyan-500 transition-all duration-700 -z-10 shadow-glow-indigo" style={{ width: `${((step - 1) / 3) * 100}%` }} />
+         <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-0.5 bg-border -z-10" />
+         <div className="absolute left-0 top-1/2 -translate-y-1/2 h-0.5 bg-primary transition-all duration-700 -z-10" style={{ width: `${((step - 1) / 3) * 100}%` }} />
          {[1, 2, 3, 4].map((i) => (
            <div
              key={i}
              className={cn(
-               "h-12 w-12 rounded-2xl flex items-center justify-center font-black transition-all duration-500 border backdrop-blur-xl",
+               "h-12 w-12 rounded-2xl flex items-center justify-center font-black transition-all duration-500 border",
                step >= i 
-                 ? "bg-indigo-500 border-indigo-400 text-white shadow-glow-indigo scale-110" 
-                 : "bg-white/5 border-white/10 text-white/20 scale-100"
+                 ? "bg-primary border-primary text-primary-foreground scale-110" 
+                 : "bg-background border-border text-muted-foreground scale-100"
              )}
            >
              {step > i ? <CheckCircle className="h-6 w-6" /> : i}
@@ -207,24 +207,19 @@ export function EventCreateForm({ initialData, isEditing = false }: EventCreateF
       </div>
 
       <form onSubmit={handleSubmit} className="relative">
-        {/* Decorative elements */}
-        <div className="absolute -top-24 -right-24 h-64 w-64 bg-indigo-500/10 rounded-full blur-3xl -z-10 animate-pulse" />
-        <div className="absolute -bottom-24 -left-24 h-64 w-64 bg-cyan-500/10 rounded-full blur-3xl -z-10 animate-pulse delay-1000" />
-
         {step === 1 && (
-          <Card className="bg-white/5 border-white/10 shadow-2xl overflow-hidden rounded-[2.5rem]">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 via-transparent to-transparent opacity-50" />
+          <Card className="bg-card border-border shadow-card overflow-hidden rounded-[2.5rem]">
             <CardHeader className="p-10 pb-6">
               <CardTitle className="text-2xl font-black uppercase tracking-tight flex items-center gap-4">
-                <div className="h-12 w-12 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10">
-                  <Info className="h-6 w-6 text-indigo-400" />
+                <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
+                  <Info className="h-6 w-6 text-primary" />
                 </div>
                 Basic Information
               </CardTitle>
             </CardHeader>
             <CardContent className="p-10 pt-4 space-y-8">
               <div className="space-y-3">
-                <Label htmlFor="title" className="text-[10px] font-black uppercase tracking-widest text-white/40">Event Title</Label>
+                <Label htmlFor="title" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Event Title</Label>
                 <Input
                   id="title"
                   name="title"
@@ -232,11 +227,11 @@ export function EventCreateForm({ initialData, isEditing = false }: EventCreateF
                   required
                   value={formData.title}
                   onChange={handleChange}
-                  className="h-14 bg-white/5 border-white/10 rounded-2xl focus:ring-indigo-500/20 text-lg font-bold"
+                  className="h-14 bg-background border-border rounded-2xl focus:ring-primary/20 text-lg font-bold"
                 />
               </div>
               <div className="space-y-3">
-                <Label htmlFor="category" className="text-[10px] font-black uppercase tracking-widest text-white/40">Category</Label>
+                <Label htmlFor="category" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Category</Label>
                 <Input
                   id="category"
                   name="category"
@@ -244,15 +239,15 @@ export function EventCreateForm({ initialData, isEditing = false }: EventCreateF
                   required
                   value={formData.category}
                   onChange={handleChange}
-                  className="h-14 bg-white/5 border-white/10 rounded-2xl focus:ring-indigo-500/20"
+                  className="h-14 bg-background border-border rounded-2xl focus:ring-primary/20"
                 />
               </div>
               <div className="space-y-3">
-                <Label htmlFor="description" className="text-[10px] font-black uppercase tracking-widest text-white/40">Description</Label>
+                <Label htmlFor="description" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Description</Label>
                 <textarea
                   id="description"
                   name="description"
-                  className="flex min-h-[160px] w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500/20 transition-all placeholder:text-white/20"
+                  className="flex min-h-40 w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/20 transition-all placeholder:text-muted-foreground"
                   placeholder="Tell people what your event is about..."
                   required
                   value={formData.description}
@@ -271,7 +266,7 @@ export function EventCreateForm({ initialData, isEditing = false }: EventCreateF
               )}
             </CardContent>
             <CardFooter className="p-10 pt-0">
-              <Button type="button" className="ml-auto h-14 px-10 rounded-2xl shadow-glow-indigo font-black uppercase tracking-widest text-xs" onClick={nextStep}>
+              <Button type="button" variant="default" className="ml-auto h-14 px-10 rounded-2xl font-black uppercase tracking-widest text-xs" onClick={nextStep}>
                 Next Step <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </CardFooter>
@@ -279,12 +274,11 @@ export function EventCreateForm({ initialData, isEditing = false }: EventCreateF
         )}
 
         {step === 2 && (
-          <Card className="bg-white/5 border-white/10 shadow-2xl overflow-hidden rounded-[2.5rem]">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 via-cyan-500 to-transparent opacity-50" />
+          <Card className="bg-card border-border shadow-card overflow-hidden rounded-[2.5rem]">
             <CardHeader className="p-10 pb-6">
               <CardTitle className="text-2xl font-black uppercase tracking-tight flex items-center gap-4">
-                <div className="h-12 w-12 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10">
-                  <Calendar className="h-6 w-6 text-cyan-400" />
+                <div className="h-12 w-12 rounded-2xl bg-verified/10 flex items-center justify-center border border-verified/20">
+                  <Calendar className="h-6 w-6 text-verified" />
                 </div>
                 Date & Location
               </CardTitle>
@@ -292,7 +286,7 @@ export function EventCreateForm({ initialData, isEditing = false }: EventCreateF
             <CardContent className="p-10 pt-4 space-y-8">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-3">
-                  <Label htmlFor="startTime" className="text-[10px] font-black uppercase tracking-widest text-white/40">Start Time</Label>
+                  <Label htmlFor="startTime" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Start Time</Label>
                   <Input
                     id="startTime"
                     name="startTime"
@@ -300,11 +294,11 @@ export function EventCreateForm({ initialData, isEditing = false }: EventCreateF
                     required
                     value={formData.startTime}
                     onChange={handleChange}
-                    className="h-14 bg-white/5 border-white/10 rounded-2xl focus:ring-cyan-500/20 font-bold"
+                    className="h-14 bg-background border-border rounded-2xl focus:ring-primary/20 font-bold"
                   />
                 </div>
                 <div className="space-y-3">
-                  <Label htmlFor="endTime" className="text-[10px] font-black uppercase tracking-widest text-white/40">End Time</Label>
+                  <Label htmlFor="endTime" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">End Time</Label>
                   <Input
                     id="endTime"
                     name="endTime"
@@ -312,19 +306,19 @@ export function EventCreateForm({ initialData, isEditing = false }: EventCreateF
                     required
                     value={formData.endTime}
                     onChange={handleChange}
-                    className="h-14 bg-white/5 border-white/10 rounded-2xl focus:ring-cyan-500/20 font-bold"
+                    className="h-14 bg-background border-border rounded-2xl focus:ring-primary/20 font-bold"
                   />
                 </div>
               </div>
               <div className="space-y-3">
-                <Label htmlFor="location" className="text-[10px] font-black uppercase tracking-widest text-white/40">Location</Label>
+                <Label htmlFor="location" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Location</Label>
                 <div className="relative">
-                  <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-white/20" />
+                  <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                   <Input
                     id="location"
                     name="location"
                     placeholder="e.g. Central Park, New York"
-                    className="h-14 bg-white/5 border-white/10 rounded-2xl focus:ring-cyan-500/20 pl-12 font-bold"
+                    className="h-14 bg-background border-border rounded-2xl focus:ring-primary/20 pl-12 font-bold"
                     required
                     value={formData.location}
                     onChange={handleChange}
@@ -343,10 +337,10 @@ export function EventCreateForm({ initialData, isEditing = false }: EventCreateF
               )}
             </CardContent>
             <CardFooter className="p-10 pt-0 justify-between">
-              <Button type="button" variant="glass" className="h-14 px-8 rounded-2xl font-black uppercase tracking-widest text-xs" onClick={prevStep}>
+              <Button type="button" variant="outline" className="h-14 px-8 rounded-2xl font-black uppercase tracking-widest text-xs" onClick={prevStep}>
                 <ArrowLeft className="mr-2 h-5 w-5" /> Back
               </Button>
-              <Button type="button" className="h-14 px-10 rounded-2xl shadow-glow-cyan font-black uppercase tracking-widest text-xs bg-cyan-600 hover:bg-cyan-500" onClick={nextStep}>
+              <Button type="button" variant="default" className="h-14 px-10 rounded-2xl font-black uppercase tracking-widest text-xs" onClick={nextStep}>
                 Next Step <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </CardFooter>
@@ -354,21 +348,20 @@ export function EventCreateForm({ initialData, isEditing = false }: EventCreateF
         )}
 
         {step === 3 && (
-          <Card className="bg-white/5 border-white/10 shadow-2xl overflow-hidden rounded-[2.5rem]">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 via-cyan-500 to-indigo-500 opacity-50" />
+          <Card className="bg-card border-border shadow-card overflow-hidden rounded-[2.5rem]">
             <CardHeader className="p-10 pb-6">
               <CardTitle className="text-2xl font-black uppercase tracking-tight flex items-center gap-4">
-                <div className="h-12 w-12 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10">
-                  <Users className="h-6 w-6 text-indigo-400" />
+                <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
+                  <Users className="h-6 w-6 text-primary" />
                 </div>
                 Pricing & Capacity
               </CardTitle>
             </CardHeader>
             <CardContent className="p-10 pt-4 space-y-8">
               <div className="space-y-3">
-                <Label htmlFor="price" className="text-[10px] font-black uppercase tracking-widest text-white/40">Ticket Price (USD)</Label>
+                <Label htmlFor="price" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Ticket Price (USD)</Label>
                 <div className="relative">
-                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 font-bold">$</div>
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground font-bold">$</div>
                   <Input
                     id="price"
                     name="price"
@@ -378,15 +371,15 @@ export function EventCreateForm({ initialData, isEditing = false }: EventCreateF
                     required
                     value={formData.price}
                     onChange={handleChange}
-                    className="h-14 bg-white/5 border-white/10 rounded-2xl focus:ring-indigo-500/20 pl-8 font-bold text-xl"
+                    className="h-14 bg-background border-border rounded-2xl focus:ring-primary/20 pl-8 font-bold text-xl"
                   />
                 </div>
-                <p className="text-[10px] text-white/20 font-medium uppercase tracking-tight">Set to 0 for free events</p>
+                <p className="text-[10px] text-muted-foreground/70 font-medium uppercase tracking-tight">Set to 0 for free events</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-3">
-                  <Label htmlFor="capacity" className="text-[10px] font-black uppercase tracking-widest text-white/40">Total Capacity</Label>
+                  <Label htmlFor="capacity" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Total Capacity</Label>
                   <Input
                     id="capacity"
                     name="capacity"
@@ -395,11 +388,11 @@ export function EventCreateForm({ initialData, isEditing = false }: EventCreateF
                     required
                     value={formData.capacity}
                     onChange={handleChange}
-                    className="h-14 bg-white/5 border-white/10 rounded-2xl focus:ring-indigo-500/20 font-bold"
+                    className="h-14 bg-background border-border rounded-2xl focus:ring-primary/20 font-bold"
                   />
                 </div>
                 <div className="space-y-3">
-                  <Label htmlFor="ticketsPerUserLimit" className="text-[10px] font-black uppercase tracking-widest text-white/40">Tickets per User Limit</Label>
+                  <Label htmlFor="ticketsPerUserLimit" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Tickets per User Limit</Label>
                   <Input
                     id="ticketsPerUserLimit"
                     name="ticketsPerUserLimit"
@@ -408,7 +401,7 @@ export function EventCreateForm({ initialData, isEditing = false }: EventCreateF
                     required
                     value={formData.ticketsPerUserLimit}
                     onChange={handleChange}
-                    className="h-14 bg-white/5 border-white/10 rounded-2xl focus:ring-indigo-500/20 font-bold"
+                    className="h-14 bg-background border-border rounded-2xl focus:ring-primary/20 font-bold"
                   />
                 </div>
               </div>
@@ -424,22 +417,21 @@ export function EventCreateForm({ initialData, isEditing = false }: EventCreateF
               )}
             </CardContent>
             <CardFooter className="p-10 pt-0 justify-between">
-              <Button type="button" variant="glass" className="h-14 px-8 rounded-2xl font-black uppercase tracking-widest text-xs" onClick={prevStep}>
+              <Button type="button" variant="outline" className="h-14 px-8 rounded-2xl font-black uppercase tracking-widest text-xs" onClick={prevStep}>
                 <ArrowLeft className="mr-2 h-5 w-5" /> Back
               </Button>
-              <Button type="button" className="h-14 px-10 rounded-2xl shadow-glow-indigo font-black uppercase tracking-widest text-xs" onClick={nextStep}>
+              <Button type="button" variant="default" className="h-14 px-10 rounded-2xl font-black uppercase tracking-widest text-xs" onClick={nextStep}>
                 Next Step <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </CardFooter>
           </Card>
         )}
         {step === 4 && (
-          <Card className="bg-white/5 border-white/10 shadow-2xl overflow-hidden rounded-[2.5rem]">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-500 via-indigo-500 to-cyan-500 opacity-50" />
+          <Card className="bg-card border-border shadow-card overflow-hidden rounded-[2.5rem]">
             <CardHeader className="p-10 pb-6">
               <CardTitle className="text-2xl font-black uppercase tracking-tight flex items-center gap-4">
-                <div className="h-12 w-12 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10">
-                  <ImageIcon className="h-6 w-6 text-cyan-400" />
+                <div className="h-12 w-12 rounded-2xl bg-verified/10 flex items-center justify-center border border-verified/20">
+                  <ImageIcon className="h-6 w-6 text-verified" />
                 </div>
                 Event Banner
               </CardTitle>
@@ -448,8 +440,8 @@ export function EventCreateForm({ initialData, isEditing = false }: EventCreateF
               <div className="space-y-6">
                 <div 
                   className={cn(
-                    "relative aspect-[1200/630] rounded-3xl border-2 border-dashed transition-all duration-500 overflow-hidden flex flex-col items-center justify-center gap-4",
-                    imageData ? "border-indigo-500/50" : "border-white/10 hover:border-white/20 bg-white/5"
+                    "relative aspect-1200/630 rounded-3xl border-2 border-dashed transition-all duration-500 overflow-hidden flex flex-col items-center justify-center gap-4",
+                    imageData ? "border-primary/50" : "border-border hover:border-primary/30 bg-background"
                   )}
                 >
                   {imageData ? (
@@ -460,23 +452,23 @@ export function EventCreateForm({ initialData, isEditing = false }: EventCreateF
                         className="absolute inset-0 w-full h-full object-cover"
                       />
                       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <Label htmlFor="banner-upload" className="cursor-pointer h-12 px-6 rounded-xl bg-white text-black font-black uppercase tracking-widest text-[10px] flex items-center gap-2">
+                        <Label htmlFor="banner-upload" className="cursor-pointer h-12 px-6 rounded-xl bg-background text-foreground font-black uppercase tracking-widest text-[10px] flex items-center gap-2">
                           <Upload className="h-4 w-4" /> Change Image
                         </Label>
                       </div>
                     </>
                   ) : (
                     <>
-                      <div className="h-20 w-20 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10">
+                      <div className="h-20 w-20 rounded-2xl bg-background flex items-center justify-center border border-border">
                         {uploading ? (
-                          <Loader2 className="h-10 w-10 text-indigo-400 animate-spin" />
+                          <Loader2 className="h-10 w-10 text-primary animate-spin" />
                         ) : (
-                          <Camera className="h-10 w-10 text-white/20" />
+                          <Camera className="h-10 w-10 text-muted-foreground" />
                         )}
                       </div>
                       <div className="text-center space-y-1">
                         <p className="text-sm font-black uppercase tracking-widest">Upload Event Banner</p>
-                        <p className="text-xs text-white/40 font-medium">1200 x 630 recommended (WebP/PNG/JPG)</p>
+                        <p className="text-xs text-muted-foreground font-medium">1200 x 630 recommended (WebP/PNG/JPG)</p>
                       </div>
                       <Input
                         id="banner-upload"
@@ -486,7 +478,7 @@ export function EventCreateForm({ initialData, isEditing = false }: EventCreateF
                         onChange={handleImageUpload}
                         disabled={uploading}
                       />
-                      <Label htmlFor="banner-upload" className="cursor-pointer h-12 px-8 rounded-xl bg-white/10 hover:bg-white/20 border border-white/10 font-black uppercase tracking-widest text-[10px] flex items-center gap-2 transition-all">
+                      <Label htmlFor="banner-upload" className="cursor-pointer h-12 px-8 rounded-xl bg-primary hover:bg-primary/90 border border-primary/20 font-black uppercase tracking-widest text-[10px] text-primary-foreground flex items-center gap-2 transition-all">
                         {uploading ? "Uploading..." : "Select File"}
                       </Label>
                     </>
@@ -505,15 +497,15 @@ export function EventCreateForm({ initialData, isEditing = false }: EventCreateF
               </div>
             </CardContent>
             <CardFooter className="p-10 pt-0 justify-between">
-              <Button type="button" variant="glass" className="h-14 px-8 rounded-2xl font-black uppercase tracking-widest text-xs" onClick={prevStep}>
+              <Button type="button" variant="outline" className="h-14 px-8 rounded-2xl font-black uppercase tracking-widest text-xs" onClick={prevStep}>
                 <ArrowLeft className="mr-2 h-5 w-5" /> Back
               </Button>
-              <Button type="submit" disabled={loading || uploading || !imageData} className="h-14 px-10 rounded-2xl shadow-glow-indigo font-black uppercase tracking-widest text-xs">
+              <Button type="submit" variant="default" disabled={loading || uploading || !imageData} className="h-14 px-10 rounded-2xl font-black uppercase tracking-widest text-xs">
                 {loading ? (
                   <div className="flex items-center gap-2">
                     <Layers className="h-5 w-5 animate-spin" /> Processing...
                   </div>
-                ) : "Create & Submit for Approval"}
+                ) : (isEditing ? "Save Changes" : "Create & Submit for Approval")}
               </Button>
             </CardFooter>
           </Card>

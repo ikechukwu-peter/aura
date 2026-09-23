@@ -97,25 +97,25 @@ export function ConversationView({ currentUserId, otherUserId, otherUserName, ba
 
   if (loading) {
     return (
-      <div className="h-[600px] flex items-center justify-center">
-        <Loader2 className="h-12 w-12 text-aura-primary animate-spin" />
+      <div className="h-150 flex items-center justify-center">
+        <Loader2 className="h-12 w-12 text-primary animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col h-[700px] bg-foreground/[0.02] border border-border/60 rounded-[2.5rem] overflow-hidden">
-      <div className="p-6 border-b border-border/60 bg-background/50 backdrop-blur-xl flex items-center justify-between">
+    <div className="flex flex-col h-175 bg-card border border-border/60 rounded-lg overflow-hidden">
+      <div className="p-6 border-b border-border/60 bg-background flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Link href={backHref} className="p-2 hover:bg-foreground/5 rounded-xl transition-colors">
-            <ArrowLeft className="h-5 w-5 text-foreground/40" />
+            <ArrowLeft className="h-5 w-5 text-muted-foreground" />
           </Link>
-          <div className="h-12 w-12 rounded-xl bg-foreground/[0.03] border border-border/60 flex items-center justify-center">
-            <User className="h-6 w-6 text-foreground/20" />
+          <div className="h-12 w-12 rounded-xl bg-foreground/3 border border-border/60 flex items-center justify-center">
+            <User className="h-6 w-6 text-muted-foreground/70" />
           </div>
           <div>
             <h3 className="font-black uppercase tracking-tight text-foreground">{otherUserName}</h3>
-            <p className="text-[10px] font-black uppercase tracking-widest text-green-500 animate-pulse">Connection Stable</p>
+            <p className="text-[10px] font-black uppercase tracking-widest text-verified">Connected</p>
           </div>
         </div>
       </div>
@@ -127,11 +127,11 @@ export function ConversationView({ currentUserId, otherUserId, otherUserName, ba
             <div key={msg.id} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
               <div className={`max-w-[70%] p-5 rounded-3xl ${
                 isMe 
-                  ? 'bg-aura-primary text-white shadow-glow-aura rounded-tr-none' 
+                  ? 'bg-primary text-white rounded-tr-none' 
                   : 'bg-background border border-border/60 text-foreground rounded-tl-none'
               }`}>
                 <p className="text-sm font-medium leading-relaxed">{msg.content}</p>
-                <p className={`text-[9px] font-black uppercase tracking-widest mt-2 ${isMe ? 'text-white/60' : 'text-foreground/30'}`}>
+                <p className={`text-[9px] font-black uppercase tracking-widest mt-2 ${isMe ? 'text-white/60' : 'text-muted-foreground/70'}`}>
                   {formatDate(msg.createdAt)}
                 </p>
               </div>
@@ -141,18 +141,18 @@ export function ConversationView({ currentUserId, otherUserId, otherUserName, ba
         {messages.length === 0 && (
           <div className="h-full flex flex-col items-center justify-center space-y-4 opacity-20">
             <Send className="h-12 w-12" />
-            <p className="text-xs font-black uppercase tracking-widest">No signals exchanged</p>
+            <p className="text-xs font-black uppercase tracking-widest">No messages yet</p>
           </div>
         )}
       </div>
 
-      <div className="p-8 bg-background/50 backdrop-blur-xl border-t border-border/60">
+      <div className="p-8 bg-background border-t border-border/60">
         <div className="flex gap-4 items-end">
           <Textarea
-            placeholder="Input neural transmission..."
+            placeholder="Type a message..."
             value={newMessage}
             onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setNewMessage(e.target.value)}
-            className="min-h-[60px] max-h-[150px] bg-background border-border/60 rounded-2xl focus:border-aura-primary/50 transition-all font-medium"
+            className="min-h-15 max-h-37.5 bg-background border-border/60 rounded-2xl focus:border-primary/50 transition-all font-medium"
             onKeyDown={(e) => {
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -163,7 +163,8 @@ export function ConversationView({ currentUserId, otherUserId, otherUserName, ba
           <Button 
             onClick={handleSend} 
             disabled={sending || !newMessage.trim()}
-            className="h-[60px] w-[60px] rounded-2xl bg-aura-primary hover:bg-aura-primary/90 text-white shadow-glow-aura shrink-0"
+            variant="default"
+            className="h-15 w-15 rounded-2xl shrink-0"
           >
             {sending ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
           </Button>

@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Aura ticketing — 4-tier oversell defense",
+    "quality_profile": "standard",
+    "viewBox": [1440, 620]
+  },
+  "components": [
+    {"id": "browser",    "type": "external", "label": "Buyer browser",       "sublabel": "Next.js App Router",          "pos": [40,   40],  "size": [170, 70]},
+    {"id": "qr",         "type": "frontend", "label": "Door scanner",        "sublabel": "offline HMAC verify",         "pos": [40,   500], "size": [170, 70]},
+    {"id": "actions",    "type": "backend",  "label": "Server Actions",      "sublabel": "RBAC ownership re-checks",    "pos": [280,  150], "size": [180, 70]},
+    {"id": "cdn",        "type": "cloud",    "label": "CDN + Edge",          "sublabel": "listings SWR 30 s",           "pos": [280,  280], "size": [180, 70]},
+    {"id": "auth",       "type": "security", "label": "auth.ts",             "sublabel": "JWT · bcrypt cost 12",        "pos": [280,  410], "size": [180, 70]},
+    {"id": "ticketing",  "type": "backend",  "label": "ticketing.ts",        "sublabel": "4-tier oversell engine",      "pos": [540,  150], "size": [190, 80]},
+    {"id": "pg",         "type": "database", "label": "PostgreSQL",          "sublabel": "CAS + @@unique + $tx",        "pos": [820,  150], "size": [190, 80]},
+    {"id": "audit",      "type": "database", "label": "AuditLog",            "sublabel": "append-only, RLS-ready",      "pos": [1100, 150], "size": [190, 70]},
+    {"id": "reconciler", "type": "backend",  "label": "TTL + reconciler",    "sublabel": "10 m hold + 5-min cron",      "pos": [540,  410], "size": [190, 70]}
+  ],
+  "boundaries": [
+    {"kind": "region",         "label": "Rendering only",                      "wraps": ["browser", "qr"]},
+    {"kind": "region",         "label": "Application host",                    "wraps": ["actions", "cdn", "auth"]},
+    {"kind": "region",         "label": "Correctness core",                    "wraps": ["ticketing", "pg", "audit", "reconciler"]},
+    {"kind": "security-group", "label": "Integrity enforced by schema",        "wraps": ["pg", "audit"]}
+  ],
+  "connections": [
+    {"id": "listings", "from": "browser",    "to": "cdn",         "label": "listings via CDN",              "variant": "dashed",   "labelDy": 40},
+    {"id": "http",     "from": "browser",    "to": "actions",     "label": "HTTP request",                  "variant": "default",  "labelDy": 60},
+    {"id": "call",     "from": "actions",    "to": "ticketing",   "label": "reserve / confirm / scan",       "variant": "emphasis", "labelDy": -30, "labelDx": 20},
+    {"id": "scan",     "from": "qr",         "to": "actions",     "label": "QR scan POST",                   "variant": "emphasis", "labelDy": -30, "labelDx": 20, "labelSegment": 0},
+    {"id": "auth-r",   "from": "actions",    "to": "auth",        "label": "verify session",                "variant": "security", "labelDy": 80, "fromSide": "right", "toSide": "right"},
+    {"id": "auth-w",   "from": "auth",       "to": "actions",     "label": "role re-check",                 "variant": "dashed",   "labelDy": -80, "fromSide": "right", "toSide": "right"},
+    {"id": "write",    "from": "ticketing",  "to": "pg",          "label": "CAS + idempotency tx",          "variant": "emphasis", "labelDy": 80},
+    {"id": "exp",      "from": "reconciler", "to": "pg",          "label": "expire · revert · reconcile",   "variant": "dashed",   "labelDy": -180},
+    {"id": "aud-a",    "from": "pg",         "to": "audit",       "label": "every state change",            "variant": "default",  "labelDy": 100},
+    {"id": "aud-b",    "from": "ticketing",  "to": "audit",       "label": "RESERVATION_CREATED…",          "variant": "security", "labelDy": -100, "fromSide": "top", "toSide": "top"},
+    {"id": "aud-c",    "from": "auth",       "to": "audit",       "label": "role changes",                  "variant": "security", "fromSide": "right", "toSide": "bottom", "labelDx": 100, "labelDy": 50}
+  ],
+  "cards": [
+    {"dot": "cyan",    "title": "Tier 1 & 2 — CAS + idempotency",
+      "items": ["UPDATE Event SET sold = sold + N WHERE sold + N <= capacity",
+                "Reservation.idempotencyKey UNIQUE: retries never double-book",
+                "Both inside one Prisma $transaction"]},
+    {"dot": "emerald", "title": "Tier 3 & 4 — schema + reconciler",
+      "items": ["@@unique([eventId, ticketIndex]): seat numbers final arbiter",
+                "reconcileCapacity re-counts + writes corrective UPDATE",
+                "CAPACITY_RECONCILED AuditLog every time drift is seen"]},
+    {"dot": "violet",  "title": "Two signing secrets, independent rotation",
+      "items": ["JWT_SECRET → session cookies (httpOnly SameSite Secure 2h)",
+                "TICKET_SECRET → door QR payloads — rotate independently",
+                "Naive QR-secret rotation breaks unscanned tickets; plan overlap window"]},
+    {"dot": "amber",   "title": "Flash sale scaling order",
+      "items": ["1. PgBouncer transaction pool   2. CDN SWR listings ≤ 30s",
+                "3. SQS FIFO per eventId partition   4. Redis shard counters LAST",
+                "Never deploy Kafka before measuring; bring PgBouncer first"]}
+  ]
+}
